@@ -1,0 +1,33 @@
+{
+    "name": "deck36/drupal-fixtures",
+    "type": "drupal-module",
+    "description": "Drupal extension to have fixtues.",
+    "keywords": ["drupal", "web", "fixtures"],
+    "homepage": "https://github.com/DECK36/drupal-fixtures",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Mike Lohmann",
+            "email": " mike.lohmann@deck36.de",
+            "homepage": "http://deck36.de"
+        },
+        {
+            "name": "Sean Robertson",
+            "email": "seanr@webolutionary.com",
+            "homepage": "http://webolutionary.com"
+        },
+        {
+            "name": "Julien Roubieu"
+        },
+        {
+            "name": "Tom Verhaeghe"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "composer/installers": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    }
+}
