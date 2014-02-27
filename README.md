@@ -15,9 +15,9 @@ file, and the user doesn't have to know a lot about drupal.
 USER FIXTURES
 =============
 Imports users.
-The following file should be written in the sites/all/fixtures folder.
 
-user.yaml
+You can place files following user.*.yml in variable_get('fixture_load_path').
+So if you wan to change the default DRUPAL_ROOT . '/../config/fixtures' you can just set the variable.
 
 MENU FIXTURES
 =============
@@ -47,3 +47,4 @@ node--page--contact.yaml        #
 RUN FIXTURES
 ============
 Use drush to run the fixtures.  The command is 'drush fixtures-all' and it currently imports users, nodes and menus.
+You can also run drush fixtures-type --type=user or node or menu to install only one.

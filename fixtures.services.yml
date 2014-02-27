@@ -1,0 +1,51 @@
+parameters:
+  drupal.fixtures.providers.fixture_provider_chain.class: Drupal\Fixtures\Providers\FixtureProviderChain
+  drupal.fixtures.providers.menu_fixture_provider.class: Drupal\Fixtures\Providers\MenuFixtureProvider
+  drupal.fixtures.providers.node_fixture_provider.class: Drupal\Fixtures\Providers\NodeFixtureProvider
+  drupal.fixtures.providers.user_fixture_provider.class: Drupal\Fixtures\Providers\UserFixtureProvider
+
+  drupal.fixtures.drupal_bridges.menu_bridge.class: Drupal\Fixtures\DrupalBridges\MenuBridge
+  drupal.fixtures.drupal_bridges.node_bridge.class: Drupal\Fixtures\DrupalBridges\NodeBridge
+  drupal.fixtures.drupal_bridges.user_bridge.class: Drupal\Fixtures\DrupalBridges\UserBridge
+
+  symfony.component.yaml.parser.class : Symfony\Component\Yaml\Parser
+  symfony.component.finder.finder.class : Symfony\Component\Finder\Finder
+
+services:
+    fixture_yaml_file_parser:
+        class: "%symfony.component.yaml.parser.class%"
+
+    fixture_finder_finder:
+            class: "%symfony.component.finder.finder.class%"
+
+    fixture_provider_chain:
+        class: "%drupal.fixtures.providers.fixture_provider_chain.class%"
+
+    menu_fixture_provider:
+                class: "%drupal.fixtures.providers.menu_fixture_provider.class%"
+                arguments:
+                    - ["@fixture_yaml_file_parser", "@menu_drupal_bridge", "@fixture_finder_finder"]
+                tags:
+                    -  { name: drupal.fixtures.provider }
+
+    node_fixture_provider:
+                class: "%drupal.fixtures.providers.node_fixture_provider.class%"
+                arguments:
+                    - ["@fixture_yaml_file_parser", "@node_drupal_bridge", "@fixture_finder_finder"]
+                tags:
+                    -  { name: drupal.fixtures.provider }
+
+    user_fixture_provider:
+            class: "%drupal.fixtures.providers.user_fixture_provider.class%"
+            arguments:
+                - ["@fixture_yaml_file_parser", "@user_drupal_bridge", "@fixture_finder_finder"]
+            tags:
+                -  { name: drupal.fixtures.provider }
+
+
+    menu_drupal_bridge:
+        class: "%drupal.fixtures.drupal_bridges.menu_bridge.class%"
+    node_drupal_bridge:
+        class: "%drupal.fixtures.drupal_bridges.node_bridge.class%"
+    user_drupal_bridge:
+         class: "%drupal.fixtures.drupal_bridges.user_bridge.class%"
