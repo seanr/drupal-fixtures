@@ -9,6 +9,8 @@
 
 namespace Drupal\Fixtures\Providers;
 
+use Drupal\Fixtures\Exceptions\ProviderNotFoundException;
+
 class FixtureProviderChain implements FixtureProviderChainInterface {
 
   /**
@@ -20,7 +22,7 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
    * {@inheritDoc}
    */
   public function addProvider(FixtureProviderInterface $provider) {
-    $this->providers[] = $provider;
+    $this->providers[$provider->getType()] = $provider;
   }
 
   /**
@@ -37,20 +39,27 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
    * {@inheritDoc}
    */
   public function getProviderNames() {
-    // TODO: Implement getProviderNames() method.
+    return array_keys($this->providers);
   }
 
   /**
    * {@inheritDoc}
    */
   public function processProvider($type) {
-    // TODO: Implement processProvider() method.
+    if ($this->hasProvider($type)) {
+      $this->providers[$type]->process();
+    }
+    else {
+      throw new ProviderNotFoundException(
+        'Cannot process provider with name: ' . $type . '. It does not exists.'
+      );
+    }
   }
 
   /**
    * {@inheritDoc}
    */
   public function hasProvider($type) {
-    // TODO: Implement hasProvider() method.
+    return array_key_exists($type, $this->providers);
   }
 }

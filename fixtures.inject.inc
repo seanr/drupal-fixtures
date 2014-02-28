@@ -2,6 +2,7 @@
 use Drupal\Fixtures\Providers\FixtureProviderChainInterface;
 use Drupal\Fixtures\Providers\FixtureProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * This function is provided by the inject module.
@@ -10,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 function fixtures_inject_build(ContainerBuilder $container, $phase) {
   // this path should be executed on build time, only
-  if ($phase != 'boot') {
+  if ($phase != 'init') {
     return;
   }
 
@@ -32,20 +33,19 @@ function fixtures_inject_build(ContainerBuilder $container, $phase) {
     'drupal.fixtures.provider'
   );
 
-  /** @var $id FixtureProviderChainInterface */
+  /** @var $id FixtureProviderInterface */
   foreach ($taggedServices as $id => $attributes) {
     $definition->addMethodCall(
       'addProvider',
       array(new Reference($id))
     );
 
-    /** @var FixtureProviderInterface $providerDefinition */
     $providerDefinition = $container->getDefinition(
       $id
     );
-
-    $providerDefinition->setFixtureLoadPath(variable_get('fixture_load_path', DRUPAL_ROOT . '/../config/fixtures'));
+    $providerDefinition->addMethodCall(
+      'setFixtureLoadPath',
+      array(variable_get('fixture_load_path', DRUPAL_ROOT . '/../config/fixtures'))
+    );
   }
-
-
 }
