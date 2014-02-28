@@ -8,12 +8,14 @@
  */
 namespace Drupal\Fixtures\DrupalBridges;
 
+use Drupal\Fixtures\Exceptions\DrupalFixturesException;
+
 /**
  * Class UserBridge is used to provide some functionality needed from drupal to create user data
  *
  * @package Drupal\Fixtures\DrupalBridges
  */
-class UserBridge implements BridgeInterface {
+class UserBridge extends BaseBridge {
 
   /**
    * {@inheritDoc}
