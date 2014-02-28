@@ -45,8 +45,15 @@ class NodeBridge extends BaseBridge {
     $pathValue = $node->path;
     $node->path = array('alias' => $pathValue);
 
-    node_save($node);
+    $savedNode = node_save($node);
 
-    return $node;
+      if (isset($node->picture)
+          && $node->picture != 0
+          && false != $existingUser = user_load_by_name($node->username)) {
+          $savedNode->picture = $this->fixturesGetUserPictureId($node->picture, $existingUser->uid, true);
+          node_save($savedNode);
+      }
+
+    return $savedNode;
   }
 }

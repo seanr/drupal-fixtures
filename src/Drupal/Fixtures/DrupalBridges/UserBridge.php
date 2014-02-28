@@ -33,7 +33,7 @@ class UserBridge extends BaseBridge {
       $savedUser = $this->fixturesSaveUser($user);
 
       if (isset($user->picture) && $user->picture != 0) {
-        $savedUser->picture = $this->fixturesGetUserPictureId($user->picture, $savedUser->uid);
+        $savedUser->picture = $this->fixturesGetUserPictureId($user->picture, $savedUser->uid, true);
         $this->fixturesSaveUser($savedUser);
       }
 
@@ -84,49 +84,5 @@ class UserBridge extends BaseBridge {
       }
     }
     return $roles;
-  }
-
-  /**
-   * Loads a picture given and returns its id to be saved with the user.
-   * Thanks a lot dmytro.
-   *
-   * @see: http://d.danylevskyi.com/node/7
-   *
-   * @param string $userPicturePath
-   * @param int $uid
-   *
-   * @return int
-   */
-  protected function fixturesGetUserPictureId($userPicturePath, $uid) {
-    $userPicturePath = (string) $userPicturePath;
-    $uid = (int) $uid;
-    if (false == file_exists($userPicturePath)) {
-      throw new DrupalFixturesException($userPicturePath . ' does not exists.');
-    }
-
-    $image_info = image_get_info($userPicturePath);
-    // create file object
-    $file = new \StdClass();
-    $file->uid = $uid;
-    $file->uri = $userPicturePath;
-    $file->filemime = $image_info['mime_type'];
-    $file->status = 0; // Yes! Set status to 0 in order to save temporary file.
-    $file->filesize = $image_info['file_size'];
-
-    // standard Drupal validators for user pictures
-    $validators = array(
-      'file_validate_is_image' => array(),
-      'file_validate_image_resolution' => array(variable_get('user_picture_dimensions', '85x85')),
-      'file_validate_size' => array(variable_get('user_picture_file_size', '30') * 1024),
-    );
-
-    // here all the magic :)
-    $errors = file_validate($file, $validators);
-    if (empty($errors)) {
-      $savedFile = file_save($file);
-      return $savedFile;
-    } else {
-      throw new DrupalFixturesException('Could not save file: ' . $userPicturePath);
-    }
   }
 }

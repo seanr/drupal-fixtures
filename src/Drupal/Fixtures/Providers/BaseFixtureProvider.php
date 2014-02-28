@@ -77,15 +77,12 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
           $loadedFixtures = $this->convertFixturesToObject($loadedFixtures);
         }
 
-        if (true == $this->bridge->validateFixtures($loadedFixtures)) {
-
-        } else {
-
-        }
+        $this->bridge->validateFixtures($loadedFixtures);
 
         $this->bridge->createFixtures($loadedFixtures);
       } catch (DrupalFixturesException $e) {
         // @todo: log exception
+        echo($e->getMessage(). "\n\n");
         $overallResult = false;
         break;
       }

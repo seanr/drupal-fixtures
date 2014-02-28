@@ -23,7 +23,7 @@ class MenuFixtureProvider extends BaseFixtureProvider {
   /**
    * @const FILENAME_PATTERN
    */
-  const FILENAME_PATTERN = 'menu--.*\.yml';
+  const FILENAME_PATTERN = 'menu--*.yml';
 
   /**
    * @const RETURN_TYPE

@@ -21,7 +21,7 @@ class UserFixtureProvider extends BaseFixtureProvider {
   /**
    * @const FILENAME_PATTERN
    */
-  const FILENAME_PATTERN = 'user.yml';
+  const FILENAME_PATTERN = 'user*.yml';
 
   /**
    * @const RETURN_TYPE
