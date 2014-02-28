@@ -24,21 +24,27 @@ services:
     menu_fixture_provider:
                 class: "%drupal.fixtures.providers.menu_fixture_provider.class%"
                 arguments:
-                    - ["@fixture_yaml_file_parser", "@menu_drupal_bridge", "@fixture_finder_finder"]
+                    - "@fixture_yaml_file_parser"
+                    - "@user_drupal_bridge"
+                    - "@fixture_finder_finder"
                 tags:
                     -  { name: drupal.fixtures.provider }
 
     node_fixture_provider:
                 class: "%drupal.fixtures.providers.node_fixture_provider.class%"
                 arguments:
-                    - ["@fixture_yaml_file_parser", "@node_drupal_bridge", "@fixture_finder_finder"]
+                    - "@fixture_yaml_file_parser"
+                    - "@user_drupal_bridge"
+                    - "@fixture_finder_finder"
                 tags:
                     -  { name: drupal.fixtures.provider }
 
     user_fixture_provider:
             class: "%drupal.fixtures.providers.user_fixture_provider.class%"
             arguments:
-                - ["@fixture_yaml_file_parser", "@user_drupal_bridge", "@fixture_finder_finder"]
+                - "@fixture_yaml_file_parser"
+                - "@user_drupal_bridge"
+                - "@fixture_finder_finder"
             tags:
                 -  { name: drupal.fixtures.provider }
 

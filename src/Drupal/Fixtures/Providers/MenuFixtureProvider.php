@@ -26,6 +26,11 @@ class MenuFixtureProvider extends BaseFixtureProvider {
   const FILENAME_PATTERN = 'menu--.*\.yml';
 
   /**
+   * @const RETURN_TYPE
+   */
+  const RETURN_TYPE = self::ARRAY_RETURN_TYPE;
+
+  /**
    * {@inheritDoc}
    */
   public function getType() {
@@ -37,5 +42,12 @@ class MenuFixtureProvider extends BaseFixtureProvider {
    */
   protected function getFilenamePattern() {
     return self::TYPE_NAME;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getReturnType() {
+    return self::RETURN_TYPE;
   }
 }

@@ -25,27 +25,22 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
   /**
    * @var Parser
    */
-  private $parser;
+  protected $parser;
 
   /**
    * @var BridgeInterface
    */
-  private $bridge;
+  protected $bridge;
 
   /**
    * @var Finder
    */
-  private $finder;
+  protected $finder;
 
   /**
    * @var string
    */
-  private $fixturesPath;
-
-  /**
-   * @const RETURN_TYPE
-   */
-  const RETURN_TYPE = self::ARRAY_RETURN_TYPE;
+  protected $fixturesPath;
 
   /**
    * @param Parser $yamlParser
@@ -68,13 +63,17 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
   public function process() {
     $overallResult = true;
 
+    if (!is_dir($this->fixturesPath)) {
+      throw new DrupalFixturesException('Cannot find dir: ' . $this->fixturesPath);
+    }
+
     /** @var SplFileInfo $file */
     foreach($this->finder->files()->name($this->getFilenamePattern())->in($this->fixturesPath) as $file)
     {
       try {
         $loadedFixtures = $this->parser->parse($file->getContents());
 
-        if (is_array($loadedFixtures) && self::RETURN_TYPE == self::STDCLASS_RETURN_TYPE) {
+        if (is_array($loadedFixtures) && $this->getReturnType() == self::STDCLASS_RETURN_TYPE) {
           $loadedFixtures = $this->convertFixturesToObject($loadedFixtures);
         }
 
@@ -106,6 +105,11 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
    * {@inheritDoc}
    */
   abstract protected function getFilenamePattern();
+
+  /**
+   * {@inheritDoc}
+   */
+  abstract protected function getReturnType();
 
   /**
    * converts an array of arrays to an array of stdClasses

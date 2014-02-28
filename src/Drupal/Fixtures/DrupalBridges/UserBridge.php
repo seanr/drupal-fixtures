@@ -32,7 +32,7 @@ class UserBridge extends BaseBridge {
       $user->timezone = variable_get('date_default_timezone', date_default_timezone_get());
       $savedUser = $this->fixturesSaveUser($user);
 
-      if (isset($user->picture)) {
+      if (isset($user->picture) && $user->picture != 0) {
         $savedUser->picture = $this->fixturesGetUserPictureId($user->picture, $savedUser->uid);
         $this->fixturesSaveUser($savedUser);
       }
@@ -46,11 +46,19 @@ class UserBridge extends BaseBridge {
   /**
    * @param \StdClass $user
    * @return bool|\StdClass|void
-   * @throws \Exception
+   * @throws DrupalFixturesException
    */
   protected function fixturesSaveUser(\StdClass $user) {
-    if (false == $savedUser = user_save($user)) {
-      throw new \Exception('Could not save user: ' . $user->name);
+    if (false != $existingUser = user_load_by_mail($user->mail)) {
+      $user->uid = $existingUser->uid;
+      // actually we cannot edit fixtures and play them in. For that you have to change mail / name.
+      $savedUser = true;
+    } else {
+      $savedUser = user_save($user);
+    }
+
+    if (false == $savedUser) {
+      throw new DrupalFixturesException('Could not save user: ' . $user->name);
     }
     return $savedUser;
   }
@@ -62,7 +70,7 @@ class UserBridge extends BaseBridge {
    * @param string $userRoles
    *
    * @return array
-   * @throws \Exception
+   * @throws DrupalFixturesException
    */
   protected function fixturesGetUsersRoles($userRoles) {
     $roles = array(DRUPAL_AUTHENTICATED_RID => TRUE);
@@ -72,7 +80,7 @@ class UserBridge extends BaseBridge {
         $roles[$role->rid] = TRUE;
       }
       else {
-        throw new \Exception("User role not found: '$role_name'", 1);
+        throw new DrupalFixturesException("User role not found: '$role_name'", 1);
       }
     }
     return $roles;
@@ -93,7 +101,7 @@ class UserBridge extends BaseBridge {
     $userPicturePath = (string) $userPicturePath;
     $uid = (int) $uid;
     if (false == file_exists($userPicturePath)) {
-      throw new \Exception($userPicturePath . ' does not exists.');
+      throw new DrupalFixturesException($userPicturePath . ' does not exists.');
     }
 
     $image_info = image_get_info($userPicturePath);
@@ -118,7 +126,7 @@ class UserBridge extends BaseBridge {
       $savedFile = file_save($file);
       return $savedFile;
     } else {
-      throw new \Exception('Could not save file: ' . $userPicturePath);
+      throw new DrupalFixturesException('Could not save file: ' . $userPicturePath);
     }
   }
 }

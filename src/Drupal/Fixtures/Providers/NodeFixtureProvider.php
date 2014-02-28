@@ -41,4 +41,11 @@ class NodeFixtureProvider extends BaseFixtureProvider {
   protected function getFilenamePattern() {
     return self::FILENAME_PATTERN;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getReturnType() {
+    return self::RETURN_TYPE;
+  }
 }

@@ -12,11 +12,15 @@ function fixtures_drush_command() {
     'callback' => 'fixtures_drush_create_all',
   );
 
-  /* @var $dic ContainerInterface */
-  $dic = drupal_container();
-  /** @var $providerChain  FixtureProviderChainInterface */
-  $providerChain = $dic->get('fixture_provider_chain');
-  $existingTypes = implode(',', $providerChain->getProviderNames());
+  $existingTypes = 'user,node,menu';
+  if (function_exists('drupal_container')) {
+    /* @var $dic ContainerInterface */
+    $dic = drupal_container();
+    /** @var $providerChain  FixtureProviderChainInterface */
+    $providerChain = $dic->get('fixture_provider_chain');
+    $existingTypes = implode(',', $providerChain->getProviderNames());
+  }
+
   $items['fixtures-type'] = array(
     'description' => 'Run installation of given type of fixtures',
     'bootstrap' => 'DRUSH_BOOTSTRAP_DRUPAL_FULL',
@@ -65,7 +69,6 @@ function fixtures_drush_create_all() {
   $dic = drupal_container();
   /** @var $providerChain  FixtureProviderChainInterface */
   $providerChain = $dic->get('fixture_provider_chain');
-  $providerChain = $providerChain->processAll();
 
   if (true == $result = $providerChain->processAll()) {
     drush_log('Generated all fixtures.', 'success');
