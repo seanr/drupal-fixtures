@@ -8,7 +8,7 @@
  */
 namespace Drupal\Fixtures\Providers;
 
-use \ErrorException;
+use Drupal\Fixtures\Exceptions\DrupalFixturesException;
 
 /**
  * Interface FixtureProviderChainInterface
@@ -29,7 +29,7 @@ interface FixtureProviderChainInterface {
    * Processes all registered fixture providers. Returns true or an errormessage if something went wrong.
    *
    * @return Boolean|string
-   * @throws \ErrorException
+   * @throws DrupalFixturesException
    */
   public function processAll();
 
@@ -57,4 +57,4 @@ interface FixtureProviderChainInterface {
    * @return Boolean
    */
   public function hasProvider($type);
-} 
+}

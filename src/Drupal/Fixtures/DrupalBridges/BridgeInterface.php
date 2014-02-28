@@ -8,6 +8,9 @@
  */
 namespace Drupal\Fixtures\DrupalBridges;
 
+use Drupal\Fixtures\Exceptions\ValidationException;
+use Drupal\Fixtures\Validators\ValidatorInterface;
+
 /**
  * Interface BridgeInterface to be used to create bridge classes to drupal which then can be mocked in tests.
  *
@@ -19,4 +22,17 @@ interface BridgeInterface {
    * @return mixed
    */
   public function createFixtures(array $fixtureData);
+
+    /**
+     * @param array $fixtureData
+     *
+     * @return Boolean
+     * @throws ValidationException
+     */
+    public function validateFixtures(array $fixtureData);
+
+    /**
+     * @param ValidatorInterface $validator
+     */
+    public function addValidator(ValidatorInterface $validator);
 }

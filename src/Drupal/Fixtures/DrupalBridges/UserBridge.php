@@ -8,12 +8,14 @@
  */
 namespace Drupal\Fixtures\DrupalBridges;
 
+use Drupal\Fixtures\Exceptions\DrupalFixturesException;
+
 /**
  * Class UserBridge is used to provide some functionality needed from drupal to create user data
  *
  * @package Drupal\Fixtures\DrupalBridges
  */
-class UserBridge implements BridgeInterface {
+class UserBridge extends BaseBridge {
 
   /**
    * {@inheritDoc}
@@ -44,11 +46,11 @@ class UserBridge implements BridgeInterface {
   /**
    * @param \StdClass $user
    * @return bool|\StdClass|void
-   * @throws \Exception
+   * @throws DrupalFixturesException
    */
   protected function fixturesSaveUser(\StdClass $user) {
     if (false == $savedUser = user_save($user)) {
-      throw new \Exception('Could not save user: ' . $user->name);
+      throw new DrupalFixturesException('Could not save user: ' . $user->name);
     }
     return $savedUser;
   }
@@ -60,7 +62,7 @@ class UserBridge implements BridgeInterface {
    * @param string $userRoles
    *
    * @return array
-   * @throws \Exception
+   * @throws DrupalFixturesException
    */
   protected function fixturesGetUsersRoles($userRoles) {
     $roles = array(DRUPAL_AUTHENTICATED_RID => TRUE);
@@ -70,7 +72,7 @@ class UserBridge implements BridgeInterface {
         $roles[$role->rid] = TRUE;
       }
       else {
-        throw new \Exception("User role not found: '$role_name'", 1);
+        throw new DrupalFixturesException("User role not found: '$role_name'", 1);
       }
     }
     return $roles;
@@ -91,7 +93,7 @@ class UserBridge implements BridgeInterface {
     $userPicturePath = (string) $userPicturePath;
     $uid = (int) $uid;
     if (false == file_exists($userPicturePath)) {
-      throw new \Exception($userPicturePath . ' does not exists.');
+      throw new DrupalFixturesException($userPicturePath . ' does not exists.');
     }
 
     $image_info = image_get_info($userPicturePath);
@@ -116,7 +118,7 @@ class UserBridge implements BridgeInterface {
       $savedFile = file_save($file);
       return $savedFile;
     } else {
-      throw new \Exception('Could not save file: ' . $userPicturePath);
+      throw new DrupalFixturesException('Could not save file: ' . $userPicturePath);
     }
   }
 }

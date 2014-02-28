@@ -13,7 +13,7 @@ namespace Drupal\Fixtures\DrupalBridges;
  *
  * @package Drupal\Fixtures\DrupalBridges
  */
-class NodeBridge implements BridgeInterface {
+class NodeBridge extends BaseBridge {
 
   /**
    * {@inheritDoc}

@@ -10,6 +10,7 @@ namespace Drupal\Fixtures\Providers;
 
 
 use Drupal\Fixtures\DrupalBridges\BridgeInterface;
+use Drupal\Fixtures\Exceptions\DrupalFixturesException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Parser;
@@ -77,8 +78,14 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
           $loadedFixtures = $this->convertFixturesToObject($loadedFixtures);
         }
 
+        if (true == $this->bridge->validateFixtures($loadedFixtures)) {
+
+        } else {
+
+        }
+
         $this->bridge->createFixtures($loadedFixtures);
-      } catch (\Exception $e) {
+      } catch (DrupalFixturesException $e) {
         // @todo: log exception
         $overallResult = false;
         break;
