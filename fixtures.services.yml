@@ -28,7 +28,7 @@ services:
                     - "@user_drupal_bridge"
                     - "@fixture_finder_finder"
                 tags:
-                    -  { name: drupal.fixtures.provider }
+                    -  { name: drupal.fixtures.provider, order:3 }
 
     node_fixture_provider:
                 class: "%drupal.fixtures.providers.node_fixture_provider.class%"
@@ -37,7 +37,7 @@ services:
                     - "@user_drupal_bridge"
                     - "@fixture_finder_finder"
                 tags:
-                    -  { name: drupal.fixtures.provider }
+                    -  { name: drupal.fixtures.provider, order:2 }
 
     user_fixture_provider:
             class: "%drupal.fixtures.providers.user_fixture_provider.class%"
@@ -46,7 +46,7 @@ services:
                 - "@user_drupal_bridge"
                 - "@fixture_finder_finder"
             tags:
-                -  { name: drupal.fixtures.provider }
+                -  { name: drupal.fixtures.provider, order:1 }
 
 
     menu_drupal_bridge:

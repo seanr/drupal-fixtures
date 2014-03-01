@@ -34,11 +34,13 @@ function fixtures_inject_build(ContainerBuilder $container, $phase) {
   );
 
   /** @var $id FixtureProviderInterface */
-  foreach ($taggedServices as $id => $attributes) {
-    $definition->addMethodCall(
-      'addProvider',
-      array(new Reference($id))
-    );
+  foreach ($taggedServices as $id => $tagAttributes) {
+      foreach ($tagAttributes as $attributes) {
+          $definition->addMethodCall(
+              'addProvider',
+              array(new Reference($id), $attributes["order"])
+          );
+      }
 
     $providerDefinition = $container->getDefinition(
       $id

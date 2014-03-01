@@ -16,14 +16,16 @@ use Drupal\Fixtures\Exceptions\DrupalFixturesException;
  * @package Drupal\Fixtures\Providers
  */
 interface FixtureProviderChainInterface {
-  /**
-   * Used to add a provider.
-   *
-   * @param FixtureProviderInterface $provider
-   *
-   * @return void
-   */
-  public function addProvider(FixtureProviderInterface $provider);
+    /**
+     * Used to add a provider.
+     *
+     * @param FixtureProviderInterface $provider
+     *
+     * @param int $order
+     *
+     * @return void
+     */
+  public function addProvider(FixtureProviderInterface $provider, $order);
 
   /**
    * Processes all registered fixture providers. Returns true or an errormessage if something went wrong.

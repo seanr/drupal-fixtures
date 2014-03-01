@@ -16,35 +16,34 @@ USER FIXTURES
 =============
 Imports users.
 
-You can place files following user.*.yml in variable_get('fixture_load_path').
+You can place files following user*.yml in `variable_get('fixture_load_path')`.
 So if you wan to change the default DRUPAL_ROOT . '/../config/fixtures' you can just set the variable.
 
 MENU FIXTURES
 =============
-Define a menu tree in a file in the folder sites/all/fixtures and use the naming convention below:
+Define a menu tree in a file in the folder you have choosen for fixtures (or the default on) and use the naming
+convention:
 
-menu--[machine-name].yaml
-menu--main-menu.yaml
-menu--other-menu.yaml
+menu--*.yml
 
-Important: note that if you specify menu items, you'll have to run them after nodes/taxonomies have been created.  Menu
-items created with a path that doesn't exist yet are not saved.
+Important: note that if you run menu fixture creation manually, you'll have to run them after nodes/taxonomies have
+been created.  Menu items created with a path that doesn't exist yet are not saved. This is no issue if you are using
+ the fixture-all command.
 
 NODE FIXTURES
 =============
-Below is a description of the node fixtures.
+Below is a description of the node fixtures convention:
 
-node--[type].yaml
-node--[type]--[custom-name].yaml
---
-node--article.yaml              # Any articles
-node--article--batch1.yaml      # "Batch" 1 of articles
-node--article--batch2.yaml      #
-node--page.yaml                 # All pages, not part of any category
-node--page--about.yaml          # For example all pages that are under the "About" menu item
-node--page--contact.yaml        #
+node--*.yml
+
 
 RUN FIXTURES
 ============
-Use drush to run the fixtures.  The command is 'drush fixtures-all' and it currently imports users, nodes and menus.
-You can also run drush fixtures-type --type=user or node or menu to install only one.
+Use drush to run the fixtures.  The command is drush fixtures-all` and it currently imports users, nodes and menus.
+You can also run `drush fixtures-type --type=user or node or menu` to install only one.
+
+VALIDATE FIXTURES
+=================
+If you have created a bunch of fixtures and you want to be sure, that they are ok,
+you can run `drush fixtures-validate-all` to validate all fixtures or `drush fixtures-validate-type --type=user or
+menu or node`

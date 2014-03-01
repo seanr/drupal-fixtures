@@ -21,14 +21,15 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
   /**
    * {@inheritDoc}
    */
-  public function addProvider(FixtureProviderInterface $provider) {
-    $this->providers[$provider->getType()] = $provider;
+  public function addProvider(FixtureProviderInterface $provider, $order) {
+    $this->providers[$order][$provider->getType()] = $provider;
   }
 
   /**
    * {@inheritDoc}
    */
   public function processAll() {
+    sort($this->providers);
     /** @var FixtureProviderInterface $provider */
     foreach ($this->providers as $provider) {
       $provider->process();
@@ -39,15 +40,25 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
    * {@inheritDoc}
    */
   public function getProviderNames() {
-    return array_keys($this->providers);
+      $keys = array();
+      foreach($this->providers as $provider) {
+          $keys = array_merge($keys, array_keys($provider));
+      }
+    return $keys;
   }
+
 
   /**
    * {@inheritDoc}
    */
   public function processProvider($type) {
     if ($this->hasProvider($type)) {
-      $this->providers[$type]->process();
+        foreach($this->providers as $provider) {
+            if (array_key_exists($type, $provider)) {
+                $provider[$type]->process();
+                break;
+            }
+        }
     }
     else {
       throw new ProviderNotFoundException(
@@ -60,6 +71,13 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
    * {@inheritDoc}
    */
   public function hasProvider($type) {
-    return array_key_exists($type, $this->providers);
+      $result = false;
+      foreach ($this->providers as $provider) {
+        if (array_key_exists($type, $provider)) {
+            $result = true;
+            break;
+        }
+      }
+    return $result;
   }
 }
