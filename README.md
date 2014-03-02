@@ -108,3 +108,31 @@ VALIDATE FIXTURES
 =================
 If you have created a bunch of fixtures and you want to be sure, that they are ok,
 you can run `drush fixtures-validate-all` to validate all fixtures.
+
+INSTALLATION
+============
+To install this module you can use composer. Just add this to your composer.json:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "git@github.com:DECK36/drupal-fixtures.git"
+    }
+],
+"require": {
+    "deck36/drupal-fixtures": "dev-master",
+    "composer/installers": "~1.0"
+},
+"extra": {
+    "installer-paths": {
+        "docroot/sites/all/modules/{$name}/": ["type:drupal-module"]
+    }
+},
+```
+
+After execution of `composer.phar install` you have to enable the module by execution of `drush en fixtures`.
+
+DEPENDENCY
+==========
+When enabling the module, inject and classloader module is loaded.
