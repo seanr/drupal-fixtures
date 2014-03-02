@@ -3,7 +3,7 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\Validators;
@@ -16,11 +16,11 @@ use Drupal\Fixtures\Exceptions\ValidationException;
  * @package Drupal\Fixtures\Validators
  */
 interface ValidatorInterface {
-    /**
-     * @param array $fixtures
-     *
-     * @return bool
-     * @throws ValidationException
-     */
-    public function validate(array $fixtures);
+  /**
+   * @param array $fixtures
+   *
+   * @return bool
+   * @throws ValidationException
+   */
+  public function validate(array $fixtures);
 }

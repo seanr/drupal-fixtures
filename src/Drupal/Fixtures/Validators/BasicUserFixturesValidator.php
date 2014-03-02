@@ -11,16 +11,15 @@ namespace Drupal\Fixtures\Validators;
 
 class BasicUserFixturesValidator extends BaseFixturesValidator {
 
-    /**
-     * @return array
-     */
-    protected function getKeyMap()
-    {
-        return array(
-            'name' => 1,
-            'mail' => 1,
-            'pass' => 1,
-            'roles' => 1
-        );
-    }
+  /**
+   * @return array
+   */
+  protected function getKeyMap() {
+    return array(
+      'name' => 1,
+      'mail' => 1,
+      'pass' => 1,
+      'roles' => 1
+    );
+  }
 }

@@ -3,7 +3,7 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\DrupalBridges;
@@ -20,10 +20,11 @@ class NodeBridge extends BaseBridge {
    */
   public function createFixtures(array $fixtureData) {
     $resultData = array();
-    foreach ($fixtureData as $node_name => $node) {
 
+    foreach ($fixtureData as $node_name => $node) {
       $resultData[$node_name] = $this->fixtureCreateNode($node);
     }
+
     return $resultData;
   }
 
@@ -31,6 +32,7 @@ class NodeBridge extends BaseBridge {
    * Do some modifications and add some fields to the given node obj.
    *
    * @param \StdClass $node
+   *
    * @return \StdClass
    */
   protected function fixtureCreateNode(\StdClass $node) {
@@ -45,15 +47,17 @@ class NodeBridge extends BaseBridge {
     $pathValue = $node->path;
     $node->path = array('alias' => $pathValue);
 
-    $savedNode = node_save($node);
+    // return null in case of success
+    node_save($node);
 
-      if (isset($node->picture)
-          && $node->picture != 0
-          && false != $existingUser = user_load_by_name($node->username)) {
-          $savedNode->picture = $this->fixturesGetUserPictureId($node->picture, $existingUser->uid, true);
-          node_save($savedNode);
-      }
+    if (isset($node->picture)
+      && $node->picture != 0
+      && FALSE != $existingUser = user_load_by_name($node->username)
+    ) {
+      $node->picture = $this->fixturesGetUserPictureId($node->picture, $existingUser->uid, TRUE);
+      node_save($node);
+    }
 
-    return $savedNode;
+    return $node;
   }
 }

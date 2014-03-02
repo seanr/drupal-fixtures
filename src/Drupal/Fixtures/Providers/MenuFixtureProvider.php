@@ -3,7 +3,7 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\Providers;
@@ -15,7 +15,7 @@ namespace Drupal\Fixtures\Providers;
  */
 class MenuFixtureProvider extends BaseFixtureProvider {
 
- /**
+  /**
    * @const TYPE_NAME
    */
   const TYPE_NAME = 'menu';
@@ -23,7 +23,7 @@ class MenuFixtureProvider extends BaseFixtureProvider {
   /**
    * @const FILENAME_PATTERN
    */
-  const FILENAME_PATTERN = 'menu--*.yml';
+  const FILENAME_PATTERN = '/menu--.*\.(yml|yaml)/';
 
   /**
    * @const RETURN_TYPE
@@ -41,7 +41,7 @@ class MenuFixtureProvider extends BaseFixtureProvider {
    * {@inheritDoc}
    */
   protected function getFilenamePattern() {
-    return self::TYPE_NAME;
+    return self::FILENAME_PATTERN;
   }
 
   /**

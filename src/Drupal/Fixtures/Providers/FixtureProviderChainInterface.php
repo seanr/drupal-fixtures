@@ -3,7 +3,7 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\Providers;
@@ -16,15 +16,15 @@ use Drupal\Fixtures\Exceptions\DrupalFixturesException;
  * @package Drupal\Fixtures\Providers
  */
 interface FixtureProviderChainInterface {
-    /**
-     * Used to add a provider.
-     *
-     * @param FixtureProviderInterface $provider
-     *
-     * @param int $order
-     *
-     * @return void
-     */
+  /**
+   * Used to add a provider.
+   *
+   * @param FixtureProviderInterface $provider
+   *
+   * @param int                      $order
+   *
+   * @return void
+   */
   public function addProvider(FixtureProviderInterface $provider, $order);
 
   /**
@@ -36,11 +36,26 @@ interface FixtureProviderChainInterface {
   public function processAll();
 
   /**
+   * Validates all fixtures.
+   *
+   * @return Boolean|string
+   * @throws DrupalFixturesException
+   */
+  public function validateAll();
+
+  /**
    * Return an array containing the names of all registered fixture providers
    *
    * @return array
    */
   public function getProviderNames();
+
+  /**
+   * Return an array containing the names of all registered fixture providers in the order, given.
+   *
+   * @return array
+   */
+  public function getProviderNamesOrdered();
 
   /**
    * Processes a registered fixture provider. Returns true or an errormessage if something went wrong.

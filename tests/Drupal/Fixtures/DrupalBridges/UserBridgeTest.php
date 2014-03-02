@@ -3,7 +3,7 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\DrupalBridges;
@@ -50,10 +50,15 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
     $this->subjectToTest
       ->expects($this->at(1))
       ->method('fixturesSaveUser')
-      ->will($this->returnCallback(function($user){
-        $user->uid = '123';
-        return $user;
-      }));
+      ->will(
+        $this->returnCallback(
+          function ($user) {
+            $user->uid = '123';
+
+            return $user;
+          }
+        )
+      );
 
     $this->subjectToTest
       ->expects($this->at(2))
@@ -97,10 +102,15 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
     $this->subjectToTest
       ->expects($this->once())
       ->method('fixturesSaveUser')
-      ->will($this->returnCallback(function($user){
-        $user->uid = '123';
-        return $user;
-      }));
+      ->will(
+        $this->returnCallback(
+          function ($user) {
+            $user->uid = '123';
+
+            return $user;
+          }
+        )
+      );
 
     $this->subjectToTest
       ->expects($this->never())
@@ -108,7 +118,7 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
 
     $savedFixtures = $this->subjectToTest->createFixtures($users);
 
-    $this->assertEquals(false, isset($savedFixtures[0]->picture));
+    $this->assertEquals(FALSE, isset($savedFixtures[0]->picture));
     $this->assertEquals($userId, $savedFixtures[0]->uid);
     $this->assertEquals($roleId, $savedFixtures[0]->roles[0]);
     $this->assertEquals(date_default_timezone_get(), $savedFixtures[0]->timezone);

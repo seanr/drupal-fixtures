@@ -3,7 +3,7 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\DrupalBridges;
@@ -19,20 +19,21 @@ use Drupal\Fixtures\Validators\ValidatorInterface;
 interface BridgeInterface {
   /**
    * @param array $fixtureData
+   *
    * @return mixed
    */
   public function createFixtures(array $fixtureData);
 
-    /**
-     * @param array $fixtureData
-     *
-     * @return Boolean
-     * @throws ValidationException
-     */
-    public function validateFixtures(array $fixtureData);
+  /**
+   * @param array $fixtureData
+   *
+   * @return Boolean
+   * @throws ValidationException
+   */
+  public function validateFixtures(array $fixtureData);
 
-    /**
-     * @param ValidatorInterface $validator
-     */
-    public function addValidator(ValidatorInterface $validator);
+  /**
+   * @param ValidatorInterface $validator
+   */
+  public function addValidator(ValidatorInterface $validator);
 }

@@ -35,10 +35,14 @@ function fixtures_menu() {
  */
 function fixtures_boot()
 {
+    if (function_exists('drupal_classloader')) {
+
+
   $loader = drupal_classloader();
 
   // This file is created by composer when installing the dependencies of the logging-component with it.
   // To use it with the already installed classloader the namespace is registered.
   $map = require_once DRUPAL_ROOT . '/../vendor/composer/autoload_namespaces.php';
   $loader->addPrefixes($map);
+    }
 }

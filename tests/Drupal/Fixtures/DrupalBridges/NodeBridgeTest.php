@@ -3,11 +3,11 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace {
-  $nodeSavedCalled = false;
+  $nodeSavedCalled = FALSE;
   $nodeGiven = array();
 }
 
@@ -17,7 +17,7 @@ namespace Drupal\Fixtures\DrupalBridges {
 
   function node_save($node) {
     global $nodeSavedCalled, $nodeGiven;
-    $nodeSavedCalled = true;
+    $nodeSavedCalled = TRUE;
     $nodeGiven = $node;
   }
 
@@ -40,7 +40,7 @@ namespace Drupal\Fixtures\DrupalBridges {
     public function tearDown() {
       global $nodeSavedCalled, $nodeGiven;
 
-      $nodeSavedCalled = false;
+      $nodeSavedCalled = FALSE;
       $nodeGiven = array();
     }
 

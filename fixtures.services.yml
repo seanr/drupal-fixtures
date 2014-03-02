@@ -8,15 +8,15 @@ parameters:
   drupal.fixtures.drupal_bridges.node_bridge.class: Drupal\Fixtures\DrupalBridges\NodeBridge
   drupal.fixtures.drupal_bridges.user_bridge.class: Drupal\Fixtures\DrupalBridges\UserBridge
 
+  drupal.fixtures.validators.basic_user_fixtures_validator.class: Drupal\Fixtures\Validators\BasicUserFixturesValidator
+  drupal.fixtures.validators.basic_node_fixtures_validator.class: Drupal\Fixtures\Validators\BasicNodeFixturesValidator
+  drupal.fixtures.validators.basic_menu_fixtures_validator.class: Drupal\Fixtures\Validators\BasicMenuFixturesValidator
+
   symfony.component.yaml.parser.class : Symfony\Component\Yaml\Parser
-  symfony.component.finder.finder.class : Symfony\Component\Finder\Finder
 
 services:
     fixture_yaml_file_parser:
         class: "%symfony.component.yaml.parser.class%"
-
-    fixture_finder_finder:
-            class: "%symfony.component.finder.finder.class%"
 
     fixture_provider_chain:
         class: "%drupal.fixtures.providers.fixture_provider_chain.class%"
@@ -25,8 +25,7 @@ services:
                 class: "%drupal.fixtures.providers.menu_fixture_provider.class%"
                 arguments:
                     - "@fixture_yaml_file_parser"
-                    - "@user_drupal_bridge"
-                    - "@fixture_finder_finder"
+                    - "@menu_drupal_bridge"
                 tags:
                     -  { name: drupal.fixtures.provider, order:3 }
 
@@ -34,8 +33,7 @@ services:
                 class: "%drupal.fixtures.providers.node_fixture_provider.class%"
                 arguments:
                     - "@fixture_yaml_file_parser"
-                    - "@user_drupal_bridge"
-                    - "@fixture_finder_finder"
+                    - "@node_drupal_bridge"
                 tags:
                     -  { name: drupal.fixtures.provider, order:2 }
 
@@ -44,9 +42,23 @@ services:
             arguments:
                 - "@fixture_yaml_file_parser"
                 - "@user_drupal_bridge"
-                - "@fixture_finder_finder"
             tags:
                 -  { name: drupal.fixtures.provider, order:1 }
+
+    user_fixture_validator:
+                class: "%drupal.fixtures.validators.basic_user_fixtures_validator.class%"
+                tags:
+                    -  { name: drupal.fixtures.user_validator }
+
+    node_fixture_validator:
+                    class: "%drupal.fixtures.validators.basic_node_fixtures_validator.class%"
+                    tags:
+                        -  { name: drupal.fixtures.node_validator }
+
+    menu_fixture_validator:
+                    class: "%drupal.fixtures.validators.basic_menu_fixtures_validator.class%"
+                    tags:
+                        -  { name: drupal.fixtures.menu_validator }
 
 
     menu_drupal_bridge:

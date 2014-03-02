@@ -3,10 +3,11 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\Providers;
+
 /**
  * Class UserFixtureProvider cares about user fixtures
  *
@@ -21,7 +22,7 @@ class UserFixtureProvider extends BaseFixtureProvider {
   /**
    * @const FILENAME_PATTERN
    */
-  const FILENAME_PATTERN = 'user*.yml';
+  const FILENAME_PATTERN = '/user.*\.(yml|yaml)/';
 
   /**
    * @const RETURN_TYPE

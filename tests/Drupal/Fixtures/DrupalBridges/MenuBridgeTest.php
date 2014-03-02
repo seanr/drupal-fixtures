@@ -3,13 +3,13 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace {
-  $menuLoadResult = false;
+  $menuLoadResult = FALSE;
   $watchDogMessage = '';
-  $menuSavedCalled = false;
+  $menuSavedCalled = FALSE;
   $menuGiven = array();
 }
 
@@ -19,12 +19,13 @@ namespace Drupal\Fixtures\DrupalBridges {
 
   function menu_load($menu_name) {
     global $menuLoadResult;
+
     return $menuLoadResult;
   }
 
   function menu_save($menu) {
     global $menuSavedCalled, $menuGiven;
-    $menuSavedCalled = true;
+    $menuSavedCalled = TRUE;
     $menuGiven = $menu;
   }
 
@@ -55,9 +56,9 @@ namespace Drupal\Fixtures\DrupalBridges {
     public function tearDown() {
       global $menuLoadResult, $watchDogMessage, $menuSavedCalled, $menuGiven;
 
-      $menuLoadResult = false;
+      $menuLoadResult = FALSE;
       $watchDogMessage = '';
-      $menuSavedCalled = false;
+      $menuSavedCalled = FALSE;
       $menuGiven = array();
     }
 
@@ -68,16 +69,16 @@ namespace Drupal\Fixtures\DrupalBridges {
       global $menuLoadResult, $watchDogMessage, $menuSavedCalled, $menuGiven;
 
       $menu = array();
-      $menu['test1'] = array (
+      $menu['test1'] = array(
         'title' => 'testtitle1',
         'description' => 'description1',
         'items' => array(
-          'exits' => true,
+          'exits' => TRUE,
           'link' => 'testlink'
         )
       );
 
-      $menuLoadResult = false;
+      $menuLoadResult = FALSE;
 
       $this->subjectToTest
         ->expects($this->once())
@@ -98,16 +99,16 @@ namespace Drupal\Fixtures\DrupalBridges {
       global $menuLoadResult, $watchDogMessage, $menuSavedCalled;
 
       $menu = array();
-      $menu['test1'] = array (
+      $menu['test1'] = array(
         'title' => 'testtitle1',
         'description' => 'description1',
         'items' => array(
-          'exits' => true,
+          'exits' => TRUE,
           'link' => 'testlink'
         )
       );
 
-      $menuLoadResult = true;
+      $menuLoadResult = TRUE;
 
       $this->subjectToTest
         ->expects($this->once())

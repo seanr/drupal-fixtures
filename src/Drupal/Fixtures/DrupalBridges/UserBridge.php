@@ -3,12 +3,13 @@
  *
  * PHP Version 5.3
  *
- * @author Mike Lohmann <mike.lohmann@bauermedia.com>
+ * @author    Mike Lohmann <mike.lohmann@bauermedia.com>
  * @copyright 2014 Bauer Digital KG
  */
 namespace Drupal\Fixtures\DrupalBridges;
 
 use Drupal\Fixtures\Exceptions\DrupalFixturesException;
+use Drupal\Fixtures\Exceptions\ValidationException;
 
 /**
  * Class UserBridge is used to provide some functionality needed from drupal to create user data
@@ -22,9 +23,11 @@ class UserBridge extends BaseBridge {
    */
   public function createFixtures(array $fixtureData) {
     $resultData = array();
-
     require_once DRUPAL_ROOT . '/' . variable_get('password_inc', 'includes/password.inc');
     foreach ($fixtureData as $key => $user) {
+      if(false == assert(is_a($user, 'StdClass'))) {
+        throw new ValidationException('The given user is not a StdClass object.');
+      }
       $user->pass = user_hash_password($user->pass);
       // user->roles are a string coming from yaml
       // then converted into an array like $roles[<roleId>] = true;
@@ -32,8 +35,9 @@ class UserBridge extends BaseBridge {
       $user->timezone = variable_get('date_default_timezone', date_default_timezone_get());
       $savedUser = $this->fixturesSaveUser($user);
 
-      if (isset($user->picture) && $user->picture != 0) {
-        $savedUser->picture = $this->fixturesGetUserPictureId($user->picture, $savedUser->uid, true);
+      if (isset($user->picture) && $user->picture !== 0) {
+        $savedUser->picture = $this->fixturesGetUserPictureId($user->picture, $savedUser->uid, TRUE);
+
         $this->fixturesSaveUser($savedUser);
       }
 
@@ -45,21 +49,24 @@ class UserBridge extends BaseBridge {
 
   /**
    * @param \StdClass $user
+   *
    * @return bool|\StdClass|void
    * @throws DrupalFixturesException
    */
   protected function fixturesSaveUser(\StdClass $user) {
-    if (false != $existingUser = user_load_by_mail($user->mail)) {
+    if (FALSE != $existingUser = user_load_by_mail($user->mail)) {
       $user->uid = $existingUser->uid;
       // actually we cannot edit fixtures and play them in. For that you have to change mail / name.
-      $savedUser = true;
-    } else {
+      $savedUser = $user;
+    }
+    else {
       $savedUser = user_save($user);
     }
 
-    if (false == $savedUser) {
+    if (FALSE == $savedUser) {
       throw new DrupalFixturesException('Could not save user: ' . $user->name);
     }
+
     return $savedUser;
   }
 
@@ -76,13 +83,15 @@ class UserBridge extends BaseBridge {
     $roles = array(DRUPAL_AUTHENTICATED_RID => TRUE);
     foreach (preg_split('/\s*,\s*/', $userRoles, 0, PREG_SPLIT_NO_EMPTY) as $role_name) {
       $role = user_role_load_by_name($role_name);
-      if ($role != NULL) {
+
+      if ($role != NULL && $role != false) {
         $roles[$role->rid] = TRUE;
       }
       else {
         throw new DrupalFixturesException("User role not found: '$role_name'", 1);
       }
     }
+
     return $roles;
   }
 }

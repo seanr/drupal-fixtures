@@ -9,7 +9,7 @@ function fixtures_drush_command() {
   $items['fixtures-all'] = array(
     'description' => 'Run installation of all fixtures',
     'bootstrap' => 'DRUSH_BOOTSTRAP_DRUPAL_FULL',
-    'callback' => 'fixtures_drush_create_all',
+    'callback' => 'fixtures_drush_create_all'
   );
 
   $existingTypes = 'user,node,menu';
@@ -28,6 +28,12 @@ function fixtures_drush_command() {
     'options' => array(
       'type' => 'You can choose one of the fixture types to be installed: ' . $existingTypes,
     )
+  );
+
+   $items['fixtures-validate-all'] = array(
+      'description' => 'Run validation of all fixtures',
+      'bootstrap' => 'DRUSH_BOOTSTRAP_DRUPAL_FULL',
+      'callback' => 'fixtures_drush_validate_all'
   );
 
   return $items;
@@ -75,6 +81,25 @@ function fixtures_drush_create_all() {
   } else {
     drush_log(
       'Error generating all fixtures: ' . $result,
+      'error'
+    );
+  }
+}
+
+/**
+ * Validate all types of fixtures available
+ */
+function fixtures_drush_validate_all() {
+  /* @var $dic ContainerInterface */
+  $dic = drupal_container();
+  /** @var $providerChain  FixtureProviderChainInterface */
+  $providerChain = $dic->get('fixture_provider_chain');
+
+  if (true == $result = $providerChain->validateAll()) {
+    drush_log('Validated all fixtures.', 'success');
+  } else {
+    drush_log(
+      'Error validating all fixtures: ' . $result,
       'error'
     );
   }

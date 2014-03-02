@@ -11,15 +11,14 @@ namespace Drupal\Fixtures\Validators;
 
 class BasicMenuFixturesValidator extends BaseFixturesValidator {
 
-    /**
-     * @return array
-     */
-    protected function getKeyMap()
-    {
-        return array(
-            'title' => 1,
-            'description' => 1,
-            'items' => 1
-        );
-    }
+  /**
+   * @return array
+   */
+  protected function getKeyMap() {
+    return array(
+      'title' => 1,
+      'description' => 1,
+      'items' => 1
+    );
+  }
 }
