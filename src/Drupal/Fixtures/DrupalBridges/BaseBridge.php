@@ -95,7 +95,8 @@ abstract class BaseBridge implements BridgeInterface {
       return $savedFile;
     }
     else {
-      throw new DrupalFixturesException('Could not save file: ' . $picturePath);
+      throw new DrupalFixturesException(
+        'Could not save file: ' . $picturePath . ' due to ' . print_r($errors, TRUE) . '.');
     }
   }
 }
