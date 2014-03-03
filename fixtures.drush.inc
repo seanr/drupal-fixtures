@@ -1,5 +1,4 @@
 <?php
-use Drupal\Fixtures\DrupalBridges\BridgeInterface;
 use Drupal\Fixtures\Providers\FixtureProviderChainInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,10 +29,10 @@ function fixtures_drush_command() {
     )
   );
 
-   $items['fixtures-validate-all'] = array(
-      'description' => 'Run validation of all fixtures',
-      'bootstrap' => 'DRUSH_BOOTSTRAP_DRUPAL_FULL',
-      'callback' => 'fixtures_drush_validate_all'
+  $items['fixtures-validate-all'] = array(
+    'description' => 'Run validation of all fixtures',
+    'bootstrap' => 'DRUSH_BOOTSTRAP_DRUPAL_FULL',
+    'callback' => 'fixtures_drush_validate_all'
   );
 
   return $items;
@@ -47,24 +46,26 @@ function fixtures_drush_create_type() {
   $providerChain = $dic->get('fixture_provider_chain');
 
   if ($providerChain->hasProvider($type)) {
-    if (true == $result = $providerChain->processProvider($type)) {
+    if (TRUE == $result = $providerChain->processProvider($type)) {
       drush_log('Generated ' . $type . ' fixtures.', 'success');
-    } else {
+    }
+    else {
       drush_log(
         'Error generating ' . $type . ' fixtures: ' . $result,
         'error'
       );
     }
-  } else {
+  }
+  else {
     drush_log(
       'Fixtures of type: ' . $type . ' are not available?!',
       'error'
     );
 
-    $result = false;
+    $result = FALSE;
   }
 
-  return true === $result;
+  return TRUE === $result;
 }
 
 /**
@@ -76,9 +77,10 @@ function fixtures_drush_create_all() {
   /** @var $providerChain  FixtureProviderChainInterface */
   $providerChain = $dic->get('fixture_provider_chain');
 
-  if (true == $result = $providerChain->processAll()) {
+  if (TRUE == $result = $providerChain->processAll()) {
     drush_log('Generated all fixtures.', 'success');
-  } else {
+  }
+  else {
     drush_log(
       'Error generating all fixtures: ' . $result,
       'error'
@@ -95,9 +97,10 @@ function fixtures_drush_validate_all() {
   /** @var $providerChain  FixtureProviderChainInterface */
   $providerChain = $dic->get('fixture_provider_chain');
 
-  if (true == $result = $providerChain->validateAll()) {
+  if (TRUE == $result = $providerChain->validateAll()) {
     drush_log('Validated all fixtures.', 'success');
-  } else {
+  }
+  else {
     drush_log(
       'Error validating all fixtures: ' . $result,
       'error'

@@ -5,44 +5,26 @@
  *
  * PHP Version 5.3
  */
-use Drupal\Fixtures\Providers\FixtureProviderChainInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-/**
- * implementation of hook_menu()
- */
-function fixtures_menu() {
-  $items = array();
-  $items['debug_menus'] = array(
-    'title' => 'debugging fixtures',
-    'description' => 'bogus function for debugging fixtures',
-    'page callback' => 'fixtures_create_menus',
-    'access arguments' => array('access content'),
-    'file' => 'fixtures.menu.inc'
-  );
-  $items['debug_nodes'] = array(
-    'title' => 'debugging fixtures',
-    'description' => 'bogus function for debugging fixtures',
-    'page callback' => 'fixtures_create_nodes',
-    'access arguments' => array('access content'),
-    'file' => 'fixtures.node.inc'
-  );
-  return $items;
-}
 
 /**
  * Implements hook_boot().
  */
-function fixtures_boot()
-{
-    if (function_exists('drupal_classloader')) {
+function fixtures_boot() {
+  if (function_exists('drupal_classloader')) {
 
 
-  $loader = drupal_classloader();
+    $loader = drupal_classloader();
 
-  // This file is created by composer when installing the dependencies of the logging-component with it.
-  // To use it with the already installed classloader the namespace is registered.
-  $map = require_once DRUPAL_ROOT . '/../vendor/composer/autoload_namespaces.php';
-  $loader->addPrefixes($map);
+    // This file is created by composer when installing the dependencies of the logging-component with it.
+    // To use it with the already installed classloader the namespace is registered.
+    $map = require_once DRUPAL_ROOT . '/../vendor/composer/autoload_namespaces.php';
+
+    // changes in api of Classloader between 2.0.x and 2.2.x
+    if (method_exists($loader, 'addPrefixes')) {
+      $loader->addPrefixes($map);
+    } else {
+      $loader->registerNamespaces($map);
     }
+  }
 }

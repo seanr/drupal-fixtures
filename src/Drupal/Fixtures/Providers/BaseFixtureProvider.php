@@ -80,6 +80,7 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
         break;
       }
     }
+
     return $overallResult;
   }
 
@@ -93,7 +94,8 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
       $loadedFixtures = $this->parser->parse($file->getContents());
       $this->bridge->validateFixtures($loadedFixtures);
     }
-    return true;
+
+    return TRUE;
   }
 
   /**

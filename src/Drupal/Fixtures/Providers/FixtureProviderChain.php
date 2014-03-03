@@ -36,7 +36,8 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
         $provider->process();
       }
     }
-    return true;
+
+    return TRUE;
   }
 
   /**
@@ -49,7 +50,8 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
         $provider->validate();
       }
     }
-    return true;
+
+    return TRUE;
   }
 
   /**
@@ -92,7 +94,7 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
       );
     }
 
-    return true;
+    return TRUE;
   }
 
   /**

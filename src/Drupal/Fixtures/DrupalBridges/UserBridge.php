@@ -25,7 +25,7 @@ class UserBridge extends BaseBridge {
     $resultData = array();
     require_once DRUPAL_ROOT . '/' . variable_get('password_inc', 'includes/password.inc');
     foreach ($fixtureData as $key => $user) {
-      if(false == assert(is_a($user, 'StdClass'))) {
+      if (FALSE == assert(is_a($user, 'StdClass'))) {
         throw new ValidationException('The given user is not a StdClass object.');
       }
       $user->pass = user_hash_password($user->pass);
@@ -84,7 +84,7 @@ class UserBridge extends BaseBridge {
     foreach (preg_split('/\s*,\s*/', $userRoles, 0, PREG_SPLIT_NO_EMPTY) as $role_name) {
       $role = user_role_load_by_name($role_name);
 
-      if ($role != NULL && $role != false) {
+      if ($role != NULL && $role != FALSE) {
         $roles[$role->rid] = TRUE;
       }
       else {

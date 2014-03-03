@@ -77,7 +77,8 @@ function fixtures_inject_prepareBridge(ContainerBuilder $container, $bridgePrefi
       array(),
       WATCHDOG_WARNING
     );
-  } else {
+  }
+  else {
     $definition = $container->getDefinition(
       $bridgeId
     );
@@ -88,10 +89,10 @@ function fixtures_inject_prepareBridge(ContainerBuilder $container, $bridgePrefi
 
     /** @var $id ValidatorInterface */
     foreach ($taggedServicesForValidator as $id => $tagAttributes) {
-        $definition->addMethodCall(
-          'addValidator',
-          array(new Reference($id))
-        );
+      $definition->addMethodCall(
+        'addValidator',
+        array(new Reference($id))
+      );
     }
   }
 }
