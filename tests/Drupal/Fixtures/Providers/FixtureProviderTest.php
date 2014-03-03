@@ -131,7 +131,7 @@ class FixtureProviderTest extends \PHPUnit_Framework_TestCase {
       ->with(
         $this->callback(
           function ($subject) {
-            return is_array($subject) && $subject[0] instanceof \StdClass;
+            return is_array($subject) && is_array($subject['custom-menu']);
           }
         )
       );

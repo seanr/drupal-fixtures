@@ -60,7 +60,8 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
   public function getProviderNames() {
     $keys = array();
     foreach ($this->providers as $order => $provider) {
-      $keys[] = array_keys($provider)[0];
+      $providerKeys = array_keys($provider);
+      $keys[] = $providerKeys[0];
     }
 
     return $keys;
