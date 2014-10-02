@@ -82,6 +82,7 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
    */
   public function processProvider($type) {
     if ($this->hasProvider($type)) {
+      /** @var FixtureProviderInterface[] $provider */
       foreach ($this->providers as $provider) {
         if (array_key_exists($type, $provider)) {
           $provider[$type]->process();

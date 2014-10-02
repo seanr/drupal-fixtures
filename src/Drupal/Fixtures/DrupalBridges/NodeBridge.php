@@ -35,29 +35,133 @@ class NodeBridge extends BaseBridge {
    *
    * @return \StdClass
    */
-  protected function fixtureCreateNode(\StdClass $node) {
-    $bodyValue = $node->body;
-    $node->body = array();
-    $node->body['und'][0]['value'] = $bodyValue;
+  protected function fixtureCreateNode(\StdClass $fixnode) {
+    $node = new \StdClass();
+    $node->is_new = true;
+    $node->title = $fixnode->title;
+    unset($fixnode->title);
 
-    $node->body['und'][0]['format'] = 'full_html';
-    $node->created = strtotime($node->date);
-    $node->changed = $node->created;
+    $node->language = $fixnode->language;
+    unset($fixnode->language);
 
-    $pathValue = $node->path;
-    $node->path = array('alias' => $pathValue);
+    $node->type = $fixnode->type;
+    unset($fixnode->type);
+
+    $existingUser = user_load_by_name($fixnode->author);
+    if (false !== $existingUser) {
+      $node->uid = $existingUser->uid;
+    }
+    unset($fixnode->author);
+
+    if (isset($fixnode->field_image)
+      && 0 !== $fixnode->field_image
+      && false !== $existingUser
+    ) {
+      $node->field_image = $this->fixturesGetUserPictureId($fixnode->field_image, $existingUser->uid, TRUE);
+    }
+    unset($fixnode->field_image);
 
     // return null in case of success
-    node_save($node);
+    node_object_prepare($node);
+    $node->created = strtotime($fixnode->date);
+    unset($fixnode->date);
+    $node->changed = time();
 
-    if (isset($node->picture)
-      && $node->picture != 0
-      && FALSE != $existingUser = user_load_by_name($node->username)
-    ) {
-      $node->picture = $this->fixturesGetUserPictureId($node->picture, $existingUser->uid, TRUE);
-      node_save($node);
+    $wrapper = entity_metadata_wrapper('node', $node);
+    $wrapper->body->set($fixnode->body);
+    unset($fixnode->body);
+
+    if (null != $categoryTermId = $this->solveCategory($fixnode)) {
+      $wrapper->field_category->set($categoryTermId);
     }
 
+    if (null != $channelTermId = $this->solveChannel($fixnode)) {
+      $wrapper->field_channel->set($channelTermId);
+    }
+
+    $tags = $this->solveTags($fixnode);
+    if (0 < count($tags)) {
+      $wrapper->field_tags->set($tags);
+    }
+
+    foreach($fixnode as $fieldname => $fieldValue) {
+      if (0 === strpos($fieldname, 'field_')) {
+        $wrapper->$fieldname->set($fieldValue);
+      } else {
+        // unsupported fields
+        unset($fixnode->$fieldname);
+      }
+    }
+
+    $wrapper->save();
+    $node = $wrapper->value();
     return $node;
+  }
+
+  /**
+   * @param \StdClass $node
+   */
+  private function solveCategory(\StdClass $node) {
+    $category = null;
+    if (property_exists($node, 'field_category')) {
+      // Workaround for missing taxonamy vocabulary selector in drupal driver
+      foreach (taxonomy_get_term_by_name($node->field_category) as $term) {
+        if ($term->vocabulary_machine_name == 'category'
+          && $term->name == $node->field_category
+        ) {
+          $category = (int)$term->tid;
+
+          // take the first one found (mostly it is for bravo. Sometimes for bravo-girl)
+          break;
+        }
+      }
+
+      unset($node->field_category);
+    }
+
+    return $category;
+  }
+
+  /**
+   * @param \StdClass $node
+   */
+  private function solveChannel(\StdClass $node) {
+    $channel = null;
+    if (property_exists($node, 'field_channel')) {
+       // Workaround for missing taxonamy vocabulary selector in drupal driver
+      foreach (taxonomy_get_term_by_name($node->field_channel) as $term) {
+        if ($term->vocabulary_machine_name == 'category'
+          && $term->name == $node->field_channel
+        ) {
+          $channel = array((int)$term->tid);
+
+          break;
+        }
+      }
+      unset($node->field_channel);
+    }
+    return $channel;
+  }
+
+  /**
+   * @param \StdClass $node
+   */
+  private function solveTags(\StdClass $node) {
+    $tags = array();
+    if (property_exists($node, 'field_tags') && is_array($node->field_tags)) {
+      foreach ($node->field_tags as $tag) {
+        // Workaround for missing taxonamy vocabulary selector in drupal driver
+        foreach (taxonomy_get_term_by_name($tag) as $term) {
+          if ($term->vocabulary_machine_name == 'tags'
+            && $term->name == $tag
+          ) {
+            $tags[] = $term->tid;
+            break;
+          }
+        }
+      }
+      unset($node->field_tags);
+    }
+    return $tags;
   }
 }

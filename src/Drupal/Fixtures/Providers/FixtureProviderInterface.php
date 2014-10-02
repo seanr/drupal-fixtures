@@ -40,4 +40,9 @@ interface FixtureProviderInterface {
    * @param string $path
    */
   public function setFixtureLoadPath($path);
+
+  /**
+   * @return void
+   */
+  public function validate();
 }

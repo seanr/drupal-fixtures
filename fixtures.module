@@ -1,30 +1,9 @@
 <?php
-/**
- * Sandbox module that creates nodes/menu items/taxonomy items from a simple yaml file
- * for testing and initial content if you develop in a clean-build environment.
- *
- * PHP Version 5.3
- */
-use Symfony\Component\DependencyInjection\ContainerInterface;
+require_once dirname(__FILE__) . '/fixtures.drush.inc';
 
 /**
- * Implements hook_boot().
+ * Implementation of hook_dic_bundle_info()
  */
-function fixtures_boot() {
-  if (function_exists('drupal_classloader')) {
-
-
-    $loader = drupal_classloader();
-
-    // This file is created by composer when installing the dependencies of the logging-component with it.
-    // To use it with the already installed classloader the namespace is registered.
-    $map = require_once DRUPAL_ROOT . '/../vendor/composer/autoload_namespaces.php';
-
-    // changes in api of Classloader between 2.0.x and 2.2.x
-    if (method_exists($loader, 'addPrefixes')) {
-      $loader->addPrefixes($map);
-    } else {
-      $loader->registerNamespaces($map);
-    }
-  }
+function fixtures_dic_bundle_info() {
+  return array('bundles' => array("\\Drupal\\Fixtures\\Bundle\\FixturesBundle\\FixturesBundle"));
 }

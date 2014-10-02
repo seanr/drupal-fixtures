@@ -1,7 +1,9 @@
 <?php
 use Drupal\Fixtures\Providers\FixtureProviderChainInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
+/**
+ * Implements hook_drush_command().
+ */
 function fixtures_drush_command() {
   $items = array();
   // Run all fixtures of all types
@@ -12,9 +14,9 @@ function fixtures_drush_command() {
   );
 
   $existingTypes = 'user,node,menu';
-  if (function_exists('drupal_container')) {
+  if (function_exists('drupal_dic')) {
     /* @var $dic ContainerInterface */
-    $dic = drupal_container();
+    $dic = drupal_dic();
     /** @var $providerChain  FixtureProviderChainInterface */
     $providerChain = $dic->get('fixture_provider_chain');
     $existingTypes = implode(',', $providerChain->getProviderNames());
@@ -41,7 +43,7 @@ function fixtures_drush_command() {
 function fixtures_drush_create_type() {
   $type = drush_get_option('type');
   /* @var $dic ContainerInterface */
-  $dic = drupal_container();
+  $dic = drupal_dic();
   /** @var $providerChain  FixtureProviderChainInterface */
   $providerChain = $dic->get('fixture_provider_chain');
 
@@ -73,7 +75,7 @@ function fixtures_drush_create_type() {
  */
 function fixtures_drush_create_all() {
   /* @var $dic ContainerInterface */
-  $dic = drupal_container();
+  $dic = drupal_dic();
   /** @var $providerChain  FixtureProviderChainInterface */
   $providerChain = $dic->get('fixture_provider_chain');
 
@@ -93,7 +95,7 @@ function fixtures_drush_create_all() {
  */
 function fixtures_drush_validate_all() {
   /* @var $dic ContainerInterface */
-  $dic = drupal_container();
+  $dic = drupal_dic();
   /** @var $providerChain  FixtureProviderChainInterface */
   $providerChain = $dic->get('fixture_provider_chain');
 
