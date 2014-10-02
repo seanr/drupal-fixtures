@@ -20,6 +20,13 @@ abstract class BaseBridge implements BridgeInterface {
   private $validators = array();
 
   /**
+   * @var array
+   */
+  private $imageValidators = array(
+    'file_validate_is_image' => array()
+  );
+
+  /**
    * {@inheritDoc}
    */
   abstract public function createFixtures(array $fixtureData);
@@ -48,7 +55,7 @@ abstract class BaseBridge implements BridgeInterface {
    *
    * @see: http://d.danylevskyi.com/node/7
    *
-   * @param string $picturePath
+   * @param string $srcPicturePath
    * @param int    $uid
    *
    * @param bool   $isUserImage
@@ -57,98 +64,49 @@ abstract class BaseBridge implements BridgeInterface {
    * @return int
    */
   protected function fixturesGetUserPictureId (
-    $picturePath,
-    $uid,
+    $srcPicturePath,
+    $uid = false,
     $isUserImage = false) {
 
-    $picturePath = (string) $picturePath;
+    $srcPicturePath = (string) $this->resolveSourceImagePath($srcPicturePath);
 
-    if (file_exists($picturePath)) {
-      $image_info = image_get_info($picturePath);
-    } else if (file_exists(DRUPAL_ROOT . $picturePath)) {
-      $image_info = image_get_info(DRUPAL_ROOT. $picturePath);
-    } else {
-      throw new DrupalFixturesException(
-        $picturePath . ' or ' . DRUPAL_ROOT . $picturePath . ' does not exists.'
-      );
+    if ($isUserImage) {
+      $this->imageValidators = $this->prepareUserAttachedImageValidators($this->imageValidators);
     }
 
-    // create file object
+    $file = $this->copyFileTo($srcPicturePath, 'image', time() . 'img_.jpg', $uid);
+
+    return $file->fid;
+  }
+
+  private  function copyFileTo($fileSource, $fileType, $fileDestination,
+    $uid = false) {
+
+    $fileDestination = 0 === strpos(
+      $fileDestination,
+      'public:'
+    ) ? $fileDestination : 'public://' . $fileDestination;
+
     $file = new \StdClass();
-    $file->uri = $picturePath;
-    $file->uid = (int) $uid;
+    $file->uri = $fileSource;
 
-    $existingFile = $this->receiveSavedFileByUri($file);
-
-    if (false == $existingFile) {
-      $validators = array(
-        'file_validate_is_image' => array()
-      );
-
-      if ($isUserImage) {
-        $validators = $this->prepareUserAttachedImageValidators($validators);
-      }
-
-      $file = $this->createImageFile(
-        $validators,
-        $file,
-        $image_info
-      );
-    } else {
-      $file = $existingFile;
+    if ($uid) {
+      $file->uid = (int) $uid;
     }
 
-    return (array) $file;
-  }
+    // required by file_entity.module line 2275
+    $file->type = $fileType;
 
-  /**
-   * @param \StdClass $file
-   *
-   * @return bool|\StdClass
-   */
-  private function receiveSavedFileByUri(\StdClass $file) {
-
-    $savedFile = reset(file_load_multiple(array(), (array) $file));
-    if (false == $savedFile) {
-      $savedFile = file_save($file);
-    };
-
-    return $savedFile;
-  }
-
-  /**
-   * @param $uid
-   * @param $isUserImage
-   * @param $file
-   * @param $image_info
-   *
-   * @throws DrupalFixturesException
-   */
-  private function createImageFile(
-    array $validators,
-    \StdClass $file,
-    array $image_info
-  ) {
-    $file->filemime = $image_info['mime_type'];
-    $file->status = 0; // Yes! Set status to 0 in order to save temporary file.
-    $file->filesize = $image_info['file_size'];
-
-
-    // here all the magic :)
-    $errors = file_validate($file, $validators);
-    if (empty($errors)) {
-      $savedFile = file_save($file);
-
-      return $savedFile->fid;
+    if (!drupal_is_writable('public://')) {
+      throw new \RuntimeException('Directory: public:// is not writeable!');
     }
-    else {
-      throw new DrupalFixturesException(
-        'Could not save file:  due to ' . print_r(
-          $errors,
-          TRUE
-        ) . '.'
-      );
+
+    $file = file_copy($file, $fileDestination, FILE_EXISTS_REPLACE);
+    if (false === $file) {
+      throw new \RuntimeException('file could not be created.');
     }
+
+    return $file;
   }
 
   /**
@@ -176,5 +134,27 @@ abstract class BaseBridge implements BridgeInterface {
       )
     );
 
+  }
+
+  /**
+   * @param $picturePath
+   *
+   * @return array|bool|mixed
+   * @throws DrupalFixturesException
+   */
+  private function resolveSourceImagePath($picturePath) {
+    if (file_exists($picturePath)) {
+      $imgSourcePath = realpath($picturePath);
+    }
+    else if (file_exists(DRUPAL_ROOT . $picturePath)) {
+      $imgSourcePath = realpath(DRUPAL_ROOT . $picturePath);
+    }
+    else {
+      throw new DrupalFixturesException(
+        $picturePath . ' or ' . DRUPAL_ROOT . $picturePath . ' does not exists.'
+      );
+    }
+
+    return $imgSourcePath;
   }
 }

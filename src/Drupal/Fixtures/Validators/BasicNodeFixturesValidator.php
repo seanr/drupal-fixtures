@@ -20,7 +20,7 @@ class BasicNodeFixturesValidator extends BaseFixturesValidator {
       'type' => 1,
       'body' => 1,
       'date' => 1,
-      'language' => 1
+      'path' => 1
     );
   }
 }

@@ -53,19 +53,35 @@ class NodeBridge extends BaseBridge {
     }
     unset($fixnode->author);
 
+    // attach an image to the node
     if (isset($fixnode->field_image)
       && 0 !== $fixnode->field_image
       && false !== $existingUser
     ) {
-      $node->field_image = $this->fixturesGetUserPictureId($fixnode->field_image, $existingUser->uid, TRUE);
+      $fid = $this->fixturesGetUserPictureId(
+        $fixnode->field_image,
+        $existingUser->uid, false
+      );
+      $display = 1;
+
+      $fixnode->field_image = array('fid' => $fid, 'display' => $display);
+    } else if (isset($fixnode->field_image)) {
+      unset($fixnode->field_image);
     }
-    unset($fixnode->field_image);
 
     // return null in case of success
     node_object_prepare($node);
     $node->created = strtotime($fixnode->date);
     unset($fixnode->date);
     $node->changed = time();
+
+    // Published or not published that is here the question
+    // 1 = published
+    $node->status = property_exists($fixnode, 'status') ? $fixnode->status : 1;
+
+    // Shown on startpage or not
+    // 1 = show
+    $node->promote = property_exists($fixnode, 'promote') ? $fixnode->promote : 1;
 
     $wrapper = entity_metadata_wrapper('node', $node);
     $wrapper->body->set($fixnode->body);
@@ -83,6 +99,7 @@ class NodeBridge extends BaseBridge {
     if (0 < count($tags)) {
       $wrapper->field_tags->set($tags);
     }
+
 
     foreach($fixnode as $fieldname => $fieldValue) {
       if (0 === strpos($fieldname, 'field_')) {
