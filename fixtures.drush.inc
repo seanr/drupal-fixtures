@@ -17,9 +17,13 @@ function fixtures_drush_command() {
   if (function_exists('drupal_dic')) {
     /* @var $dic ContainerInterface */
     $dic = drupal_dic();
-    /** @var $providerChain  FixtureProviderChainInterface */
-    $providerChain = $dic->get('fixture_provider_chain');
-    $existingTypes = implode(',', $providerChain->getProviderNames());
+
+    $existingTypes = '';
+    if ($dic->has('fixture_provider_chain')) {
+      /** @var $providerChain  FixtureProviderChainInterface */
+      $providerChain = $dic->get('fixture_provider_chain');
+      $existingTypes = implode(',', $providerChain->getProviderNames());
+    }
   }
 
   $items['fixtures-type'] = array(
