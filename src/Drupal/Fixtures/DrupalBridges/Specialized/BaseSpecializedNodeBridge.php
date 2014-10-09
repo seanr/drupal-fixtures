@@ -8,7 +8,11 @@
 namespace Drupal\Fixtures\DrupalBridges\Specialized;
 
 
+use Drupal\Fixtures\DrupalBridges\ImageBridge;
+
 abstract class BaseSpecializedNodeBridge implements SpecializedBridgeInterface {
+  use ImageBridge;
+
   /**
    * @const string
    */
@@ -34,6 +38,8 @@ abstract class BaseSpecializedNodeBridge implements SpecializedBridgeInterface {
 
   /**
    * @param \StdClass $node
+   *
+   * @return int|null
    */
   protected function solveCategory(\StdClass $node) {
     $category = NULL;
@@ -58,6 +64,8 @@ abstract class BaseSpecializedNodeBridge implements SpecializedBridgeInterface {
 
   /**
    * @param \StdClass $node
+   *
+   * @return array|null
    */
   protected function solveChannel(\StdClass $node) {
     $channel = NULL;
@@ -79,6 +87,8 @@ abstract class BaseSpecializedNodeBridge implements SpecializedBridgeInterface {
 
   /**
    * @param \StdClass $node
+   *
+   * @return array
    */
   protected function solveTags(\StdClass $node) {
     $tags = array();
@@ -102,6 +112,7 @@ abstract class BaseSpecializedNodeBridge implements SpecializedBridgeInterface {
   /**
    * @param \StdClass $node
    *
+   * @return \StdClass
    * @throws SpecializedBridgeException
    */
   protected function prepareNode(\StdClass $node) {
@@ -124,8 +135,8 @@ abstract class BaseSpecializedNodeBridge implements SpecializedBridgeInterface {
   }
 
   /**
-   * @param \StdClass              $fixNode
-   * @param \EntityDrupalWrapper $wrapper
+   * @param \StdClass                                   $fixNode
+   * @param \EntityDrupalWrapper|\EntityMetadataWrapper $wrapper
    */
   protected function solveFields(\StdClass $fixNode, \EntityMetadataWrapper $wrapper) {
     foreach ($fixNode as $fieldname => $fieldValue) {

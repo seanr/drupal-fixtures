@@ -40,7 +40,12 @@ class NodeBridge extends BaseBridge implements NodeBridgeInterface {
   /**
    * Do some modifications and add some fields to the given node obj.
    *
-   * @param \StdClass $node
+   * @param  string $nodeType
+   * @param \StdClass $fixnode
+   *
+   * @throws SpecializedBridgeException
+   * @throws DrupalFixturesException
+   * @internal param \StdClass $node
    *
    * @return \StdClass
    */
@@ -53,30 +58,6 @@ class NodeBridge extends BaseBridge implements NodeBridgeInterface {
       throw new DrupalFixturesException(
         'Could not find specialized Bridge for node type: ' . $nodeType
       );
-    }
-
-    $existingUser = user_load_by_name($fixnode->author);
-    if (FALSE !== $existingUser) {
-      $node->uid = $existingUser->uid;
-    }
-    unset($fixnode->author);
-
-    // attach an image to the node
-    if (isset($fixnode->field_image)
-      && 0 !== $fixnode->field_image
-      && FALSE !== $existingUser
-    ) {
-      $fid = $this->fixturesGetPictureId(
-        $fixnode->field_image,
-        $existingUser->uid,
-        FALSE
-      );
-      $display = 1;
-
-      $fixnode->field_image = array('fid' => $fid, 'display' => $display);
-    }
-    else if (isset($fixnode->field_image)) {
-      unset($fixnode->field_image);
     }
 
     return $node;
