@@ -8,12 +8,21 @@
  */
 namespace Drupal\Fixtures\DrupalBridges;
 
+use Drupal\Fixtures\DrupalBridges\Specialized\SpecializedBridgeException;
+use Drupal\Fixtures\DrupalBridges\Specialized\SpecializedBridgeInterface;
+use Drupal\Fixtures\Exceptions\DrupalFixturesException;
+
 /**
  * Class NodeBridge is used to provide some functionality needed from drupal to create node data
  *
  * @package Drupal\Fixtures\DrupalBridges
  */
-class NodeBridge extends BaseBridge {
+class NodeBridge extends BaseBridge implements NodeBridgeInterface {
+
+  /**
+   * @var array
+   */
+  private $specializedBridges = array();
 
   /**
    * {@inheritDoc}
@@ -22,7 +31,7 @@ class NodeBridge extends BaseBridge {
     $resultData = array();
 
     foreach ($fixtureData as $node_name => $node) {
-      $resultData[$node_name] = $this->fixtureCreateNode($node);
+      $resultData[$node_name] = $this->fixtureCreateNode($node->type, $node);
     }
 
     return $resultData;
@@ -35,20 +44,19 @@ class NodeBridge extends BaseBridge {
    *
    * @return \StdClass
    */
-  protected function fixtureCreateNode(\StdClass $fixnode) {
-    $node = new \StdClass();
-    $node->is_new = true;
-    $node->title = $fixnode->title;
-    unset($fixnode->title);
+  protected function fixtureCreateNode($nodeType, \StdClass $fixnode) {
 
-    $node->language = $fixnode->language;
-    unset($fixnode->language);
-
-    $node->type = $fixnode->type;
-    unset($fixnode->type);
+    if ($this->hasSpecializedBridge($nodeType)) {
+      $node = $this->getSpecializedBridge($nodeType)->process($fixnode);
+    }
+    else {
+      throw new DrupalFixturesException(
+        'Could not find specialized Bridge for node type: ' . $nodeType
+      );
+    }
 
     $existingUser = user_load_by_name($fixnode->author);
-    if (false !== $existingUser) {
+    if (FALSE !== $existingUser) {
       $node->uid = $existingUser->uid;
     }
     unset($fixnode->author);
@@ -56,129 +64,48 @@ class NodeBridge extends BaseBridge {
     // attach an image to the node
     if (isset($fixnode->field_image)
       && 0 !== $fixnode->field_image
-      && false !== $existingUser
+      && FALSE !== $existingUser
     ) {
-      $fid = $this->fixturesGetUserPictureId(
+      $fid = $this->fixturesGetPictureId(
         $fixnode->field_image,
-        $existingUser->uid, false
+        $existingUser->uid,
+        FALSE
       );
       $display = 1;
 
       $fixnode->field_image = array('fid' => $fid, 'display' => $display);
-    } else if (isset($fixnode->field_image)) {
+    }
+    else if (isset($fixnode->field_image)) {
       unset($fixnode->field_image);
     }
 
-    // return null in case of success
-    node_object_prepare($node);
-    $node->created = strtotime($fixnode->date);
-    unset($fixnode->date);
-    $node->changed = time();
-
-    // Published or not published that is here the question
-    // 1 = published
-    $node->status = property_exists($fixnode, 'status') ? $fixnode->status : 1;
-
-    // Shown on startpage or not
-    // 1 = show
-    $node->promote = property_exists($fixnode, 'promote') ? $fixnode->promote : 1;
-
-    $wrapper = entity_metadata_wrapper('node', $node);
-    $wrapper->body->set($fixnode->body);
-    unset($fixnode->body);
-
-    if (null != $categoryTermId = $this->solveCategory($fixnode)) {
-      $wrapper->field_category->set($categoryTermId);
-    }
-
-    if (null != $channelTermId = $this->solveChannel($fixnode)) {
-      $wrapper->field_channel->set($channelTermId);
-    }
-
-    $tags = $this->solveTags($fixnode);
-    if (0 < count($tags)) {
-      $wrapper->field_tags->set($tags);
-    }
-
-
-    foreach($fixnode as $fieldname => $fieldValue) {
-      if (0 === strpos($fieldname, 'field_')) {
-        $wrapper->$fieldname->set($fieldValue);
-      } else {
-        // unsupported fields
-        unset($fixnode->$fieldname);
-      }
-    }
-
-    $wrapper->save();
-    $node = $wrapper->value();
     return $node;
   }
 
   /**
-   * @param \StdClass $node
+   * {@inheritDoc}
    */
-  private function solveCategory(\StdClass $node) {
-    $category = null;
-    if (property_exists($node, 'field_category')) {
-      // Workaround for missing taxonamy vocabulary selector in drupal driver
-      foreach (taxonomy_get_term_by_name($node->field_category) as $term) {
-        if ($term->vocabulary_machine_name == 'category'
-          && $term->name == $node->field_category
-        ) {
-          $category = (int)$term->tid;
-
-          // take the first one found (mostly it is for bravo. Sometimes for bravo-girl)
-          break;
-        }
-      }
-
-      unset($node->field_category);
-    }
-
-    return $category;
+  public function addSpecializedBridge(SpecializedBridgeInterface $bridge) {
+    $this->specializedBridges[$bridge->getName()] = $bridge;
   }
 
   /**
-   * @param \StdClass $node
+   * {@inheritDoc}
    */
-  private function solveChannel(\StdClass $node) {
-    $channel = null;
-    if (property_exists($node, 'field_channel')) {
-       // Workaround for missing taxonamy vocabulary selector in drupal driver
-      foreach (taxonomy_get_term_by_name($node->field_channel) as $term) {
-        if ($term->vocabulary_machine_name == 'category'
-          && $term->name == $node->field_channel
-        ) {
-          $channel = array((int)$term->tid);
-
-          break;
-        }
-      }
-      unset($node->field_channel);
-    }
-    return $channel;
+  public function hasSpecializedBridge($name) {
+    return array_key_exists($name, $this->specializedBridges);
   }
 
   /**
-   * @param \StdClass $node
+   * {@inheritDoc}
    */
-  private function solveTags(\StdClass $node) {
-    $tags = array();
-    if (property_exists($node, 'field_tags') && is_array($node->field_tags)) {
-      foreach ($node->field_tags as $tag) {
-        // Workaround for missing taxonamy vocabulary selector in drupal driver
-        foreach (taxonomy_get_term_by_name($tag) as $term) {
-          if ($term->vocabulary_machine_name == 'tags'
-            && $term->name == $tag
-          ) {
-            $tags[] = $term->tid;
-            break;
-          }
-        }
-      }
-      unset($node->field_tags);
+  public function getSpecializedBridge($name) {
+    if (!$this->hasSpecializedBridge($name)) {
+      throw new SpecializedBridgeException(
+        'Bridge ' . $name . ' does not exists.'
+      );
     }
-    return $tags;
+
+    return $this->specializedBridges[$name];
   }
 }

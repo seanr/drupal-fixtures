@@ -9,6 +9,7 @@
 namespace Drupal\Fixtures\Validators;
 
 
+use Drupal\Fixtures\Validators\Specialized\ArticleNodeValidator;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Parser;
@@ -59,6 +60,7 @@ class BasicUserFixturesValidatorTest extends \PHPUnit_Framework_TestCase {
    */
   public function testValidateNodeFixturesOk() {
     $this->subjectToTest = new BasicNodeFixturesValidator();
+    $this->subjectToTest->addSpecializedValidator(new ArticleNodeValidatorStub());
     $this->validateOk('node--*.yaml');
   }
 
@@ -67,6 +69,7 @@ class BasicUserFixturesValidatorTest extends \PHPUnit_Framework_TestCase {
    */
   public function testValidateNodeFixturesException() {
     $this->subjectToTest = new BasicNodeFixturesValidator();
+    $this->subjectToTest->addSpecializedValidator(new ArticleNodeValidatorStub());
     $this->validateOk('wrongnode--*.yaml');
   }
 
@@ -106,5 +109,31 @@ class BasicUserFixturesValidatorTest extends \PHPUnit_Framework_TestCase {
       $loadedFixtures = $this->parser->parse($file->getContents());
       $this->subjectToTest->validate($loadedFixtures);
     }
+  }
+}
+
+namespace Drupal\Fixtures\Validators;
+
+
+use Drupal\Fixtures\Validators\Specialized\BaseSpecializedNodeValidator;
+
+class ArticleNodeValidatorStub extends BaseSpecializedNodeValidator {
+  /**
+   * @const string
+   */
+  const NAME = 'article';
+
+  /**
+   * @return array
+   */
+  protected function getKeyMap() {
+    return array(
+      'title' => 1,
+      'type' => 1,
+      'body' => 1,
+      'date' => 1,
+      'path' => 1,
+      'language' => 1
+    );
   }
 }

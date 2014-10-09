@@ -19,7 +19,7 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
   public function setUp() {
     $this->subjectToTest = $this->getMock(
       'Drupal\Fixtures\DrupalBridges\UserBridge',
-      array('fixturesGetUsersRoles', 'fixturesSaveUser', 'fixturesGetUserPictureId')
+      array('fixturesGetUsersRoles', 'fixturesSaveUser', 'fixturesGetPictureId')
     );
   }
 
@@ -66,7 +66,7 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
 
     $this->subjectToTest
       ->expects($this->once())
-      ->method('fixturesGetUserPictureId')
+      ->method('fixturesGetPictureId')
       ->will($this->returnValue($fileId));
 
     $savedFixtures = $this->subjectToTest->createFixtures($users);
@@ -114,7 +114,7 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
 
     $this->subjectToTest
       ->expects($this->never())
-      ->method('fixturesGetUserPictureId');
+      ->method('fixturesGetPictureId');
 
     $savedFixtures = $this->subjectToTest->createFixtures($users);
 

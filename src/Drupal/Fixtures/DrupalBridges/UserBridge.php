@@ -23,20 +23,32 @@ class UserBridge extends BaseBridge {
    */
   public function createFixtures(array $fixtureData) {
     $resultData = array();
-    require_once DRUPAL_ROOT . '/' . variable_get('password_inc', 'includes/password.inc');
+    require_once DRUPAL_ROOT . '/' . variable_get(
+        'password_inc',
+        'includes/password.inc'
+      );
     foreach ($fixtureData as $key => $user) {
       if (FALSE == assert(is_a($user, 'StdClass'))) {
-        throw new ValidationException('The given user is not a StdClass object.');
+        throw new ValidationException(
+          'The given user is not a StdClass object.'
+        );
       }
       $user->pass = user_hash_password($user->pass);
       // user->roles are a string coming from yaml
       // then converted into an array like $roles[<roleId>] = true;
       $user->roles = $this->fixturesGetUsersRoles($user->roles);
-      $user->timezone = variable_get('date_default_timezone', date_default_timezone_get());
+      $user->timezone = variable_get(
+        'date_default_timezone',
+        date_default_timezone_get()
+      );
       $savedUser = $this->fixturesSaveUser($user);
 
       if (isset($user->picture) && $user->picture !== 0) {
-        $savedUser->picture = $this->fixturesGetUserPictureId($user->picture, $savedUser->uid, TRUE);
+        $savedUser->picture = $this->fixturesGetPictureId(
+          $user->picture,
+          $savedUser->uid,
+          TRUE
+        );
 
         $this->fixturesSaveUser($savedUser);
       }
@@ -81,14 +93,21 @@ class UserBridge extends BaseBridge {
    */
   protected function fixturesGetUsersRoles($userRoles) {
     $roles = array(DRUPAL_AUTHENTICATED_RID => TRUE);
-    foreach (preg_split('/\s*,\s*/', $userRoles, 0, PREG_SPLIT_NO_EMPTY) as $role_name) {
+    foreach (preg_split(
+               '/\s*,\s*/',
+               $userRoles,
+               0,
+               PREG_SPLIT_NO_EMPTY
+             ) as $role_name) {
       $role = user_role_load_by_name($role_name);
 
       if ($role != NULL && $role != FALSE) {
         $roles[$role->rid] = TRUE;
       }
       else {
-        throw new DrupalFixturesException("User role not found: '$role_name'", 1);
+        throw new DrupalFixturesException(
+          "User role not found: '$role_name'", 1
+        );
       }
     }
 

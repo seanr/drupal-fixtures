@@ -31,6 +31,6 @@ abstract class BaseFixturesValidator implements ValidatorInterface {
       }
     }
 
-    return TRUE;
+    return true;
   }
 }

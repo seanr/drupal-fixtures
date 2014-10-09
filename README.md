@@ -79,25 +79,130 @@ node--*.yml
 Example:
 
 ```yaml
-page-home:
-  title: Home
-  type: page
-  body: |
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam cursus diam nec eros aliquam eget auctor tortor pharetra. Fusce sagittis felis a nulla mattis vitae pellentesque lectus consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut id dui arcu, vitae feugiat purus. Etiam interdum fermentum purus, hendrerit sodales risus suscipit interdum. Donec facilisis condimentum molestie. Ut nec mi vitae est scelerisque dapibus. Aenean quis purus neque, non placerat lectus. Aliquam erat volutpat. Phasellus vehicula bibendum metus eget sodales. Sed porta velit eu massa condimentum et vestibulum dui posuere. Ut lacus est, tempor ut lobortis nec, laoreet semper est. Donec hendrerit nulla sit amet mauris sollicitudin euismod.</p>
-                <p>Mauris non mauris id augue tincidunt elementum in vel orci. Curabitur varius enim id odio tempus eget interdum neque aliquet. Fusce eleifend, magna eu ultrices rhoncus, diam nunc rutrum libero, vel interdum erat risus congue turpis. Etiam sed porttitor arcu. Nulla in ipsum in tellus lobortis imperdiet. Nunc venenatis lacinia erat, nec consequat libero placerat nec. Fusce tincidunt varius mattis.</p>
-                <p>Nullam tincidunt iaculis nisl, ac sagittis dui lobortis ut. Nunc sed adipiscing massa. Etiam facilisis, turpis id congue blandit, velit nulla aliquam justo, et euismod odio tellus vitae augue. Ut ultrices porttitor imperdiet. Curabitur et lorem et lacus pharetra placerat ut sit amet eros. In luctus mollis nunc in ultrices. Nullam tincidunt arcu id diam commodo eget lobortis felis porttitor. Fusce fringilla ultricies dolor sit amet imperdiet. Proin imperdiet hendrerit pellentesque. Mauris fermentum placerat mi, non laoreet nibh tristique quis. Donec elit enim, tincidunt non gravida sed, porta sit amet ante. Aenean nec magna eu leo ullamcorper elementum volutpat nec orci. Cras ac condimentum ipsum. Nunc ornare hendrerit tellus.</p>
-  date: 2012-08-13 15:33:10
-  path: home
-page-about:
-  title: About me
-  type: page
-  body: |
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam cursus diam nec eros aliquam eget auctor tortor pharetra. Fusce sagittis felis a nulla mattis vitae pellentesque lectus consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut id dui arcu, vitae feugiat purus. Etiam interdum fermentum purus, hendrerit sodales risus suscipit interdum. Donec facilisis condimentum molestie. Ut nec mi vitae est scelerisque dapibus. Aenean quis purus neque, non placerat lectus. Aliquam erat volutpat. Phasellus vehicula bibendum metus eget sodales. Sed porta velit eu massa condimentum et vestibulum dui posuere. Ut lacus est, tempor ut lobortis nec, laoreet semper est. Donec hendrerit nulla sit amet mauris sollicitudin euismod.</p>
-        <p>Mauris non mauris id augue tincidunt elementum in vel orci. Curabitur varius enim id odio tempus eget interdum neque aliquet. Fusce eleifend, magna eu ultrices rhoncus, diam nunc rutrum libero, vel interdum erat risus congue turpis. Etiam sed porttitor arcu. Nulla in ipsum in tellus lobortis imperdiet. Nunc venenatis lacinia erat, nec consequat libero placerat nec. Fusce tincidunt varius mattis.</p>
-        <p>Nullam tincidunt iaculis nisl, ac sagittis dui lobortis ut. Nunc sed adipiscing massa. Etiam facilisis, turpis id congue blandit, velit nulla aliquam justo, et euismod odio tellus vitae augue. Ut ultrices porttitor imperdiet. Curabitur et lorem et lacus pharetra placerat ut sit amet eros. In luctus mollis nunc in ultrices. Nullam tincidunt arcu id diam commodo eget lobortis felis porttitor. Fusce fringilla ultricies dolor sit amet imperdiet. Proin imperdiet hendrerit pellentesque. Mauris fermentum placerat mi, non laoreet nibh tristique quis. Donec elit enim, tincidunt non gravida sed, porta sit amet ante. Aenean nec magna eu leo ullamcorper elementum volutpat nec orci. Cras ac condimentum ipsum. Nunc ornare hendrerit tellus.</p>
-  date: 2012-08-13 15:30:10
-  path: about-me
+
+article-1:
+  title: Today a new star is born from fixtures
+  language: de
+  field_category: Stars
+  field_channel: BRAVO
+  field_tags:
+    - Beauty
+    - Stars
+  type: article
+  body:
+    value: |
+        Today something went wrong.  I still can't figure out exactly, but i'm still going to blog about
+        it.  I <em>really</em> don't care if anyone reads this, but I want this off my chest.  I'm a really
+        boring writer so I end up writing some rubbish in this YAML file.
+
+        Have fun reading something completely useless :-)
+    format: full_html
+  date: 2012-08-05 22:48:51
+  field_brv_3column_teaser_title: Katze ist Katze in Fixtures
+  author: editor_fixtures
+  path: blog/today-something-went-wrong
+  field_image: ../config/fixtures/img/cat.jpg
+
 ```
+
+You will need to implement a Specialized NodeBridge Class which can handle your node types.
+It is necessary that the NAME is equal to the type of node you want to handle. Means: NAME = 'article' handles
+node->type = article.
+
+After that you need to define them as a service and tag them with: drupal.fixtures.drupal_node_bridge_specialized.
+
+Example:
+
+```php
+
+    class ArticleNodeBridgeStub implements SpecializedBridgeInterface {
+    /**
+     * @const
+     */
+    const NAME = 'article';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process(\StdClass $fixNode) {
+      $node = new \StdClass();
+      $node->is_new = TRUE;
+      $node->title = $fixNode->title;
+      unset($fixNode->title);
+
+      $node->language = $fixNode->language;
+      unset($fixNode->language);
+
+      $node->type = $fixNode->type;
+      unset($fixNode->type);
+
+      $node->created = strtotime($fixNode->date);
+      unset($fixNode->date);
+      $node->changed = time();
+
+      // Shown on startpage or not
+      // 1 = show
+      $node->promote = property_exists(
+        $fixNode,
+        'promote'
+      ) ? $fixNode->promote : 1;
+
+      // Published or not published that is here the question
+      // 1 = published
+      $node->status = property_exists(
+        $fixNode,
+        'status'
+      ) ? $fixNode->status : 1;
+
+      $node->body = array(
+        'und' => array(
+          0 => array('value' => $fixNode->body)
+        )
+      );
+
+      $wrappedNode = $this->wrapNode($this->prepareNode($node));
+      unset($fixNode->body);
+
+      $wrappedNode->save();
+      return $wrappedNode->value();
+    }
+
+    /**
+     * @throws SpecializedBridgeException
+     * @return string
+     */
+    public function getName() {
+      return self::NAME;
+    }
+
+    /**
+     * @param \StdClass $node
+     *
+     * @throws SpecializedBridgeException
+     */
+    protected function prepareNode(\StdClass $node) {
+      // return null in case of success
+      if (null !== node_object_prepare($node)) {
+        throw new SpecializedBridgeException('Node Object Preparation failed.');
+      }
+
+      return $node;
+    }
+
+    /**
+     * @param \StdClass $node
+     * @param string    $type
+     *
+     * @return \EntityDrupalWrapper
+     */
+    protected function wrapNode(\StdClass $node, $type = 'node') {
+      return entity_metadata_wrapper($type, $node);
+    }
+
+  }
+
+```
+
 
 RUN FIXTURES
 ============
@@ -108,6 +213,40 @@ VALIDATE FIXTURES
 =================
 If you have created a bunch of fixtures and you want to be sure, that they are ok,
 you can run `drush fixtures-validate-all` to validate all fixtures.
+
+If you want to validate your different node type fixtures before using them you can implement the the 
+SpecializedNodeValidatorInterface and ValidatorInterface or extend the BaseSpecializedNodeValidator class.
+
+After that you need to define them as a service and tag them with: drupal.fixtures.drupal_node_validator_specialized.
+ 
+Example:
+
+```php
+
+    use Drupal\Fixtures\Validators\Specialized\BaseSpecializedNodeValidator;
+    
+    class ArticleNodeValidatorStub extends BaseSpecializedNodeValidator {
+      /**
+       * @const string
+       */
+      const NAME = 'article';
+    
+      /**
+       * @return array
+       */
+      protected function getKeyMap() {
+        return array(
+          'title' => 1,
+          'type' => 1,
+          'body' => 1,
+          'date' => 1,
+          'path' => 1,
+          'language' => 1
+        );
+      }
+    }
+
+```
 
 INSTALLATION
 ============
@@ -135,4 +274,4 @@ After execution of `composer.phar install` you have to enable the module by exec
 
 DEPENDENCY
 ==========
-When enabling the module, inject and classloader module is loaded.
+When enabling the module dic is loaded.

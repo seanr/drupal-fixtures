@@ -63,24 +63,36 @@ abstract class BaseBridge implements BridgeInterface {
    * @throws \Drupal\Fixtures\Exceptions\DrupalFixturesException
    * @return int
    */
-  protected function fixturesGetUserPictureId (
+  protected function fixturesGetPictureId(
     $srcPicturePath,
-    $uid = false,
-    $isUserImage = false) {
+    $uid = FALSE,
+    $isUserImage = FALSE
+  ) {
 
     $srcPicturePath = (string) $this->resolveSourceImagePath($srcPicturePath);
 
     if ($isUserImage) {
-      $this->imageValidators = $this->prepareUserAttachedImageValidators($this->imageValidators);
+      $this->imageValidators = $this->prepareUserAttachedImageValidators(
+        $this->imageValidators
+      );
     }
 
-    $file = $this->copyFileTo($srcPicturePath, 'image', time() . 'img_.jpg', $uid);
+    $file = $this->copyFileTo(
+      $srcPicturePath,
+      'image',
+      time() . 'img_.jpg',
+      $uid
+    );
 
     return $file->fid;
   }
 
-  private  function copyFileTo($fileSource, $fileType, $fileDestination,
-    $uid = false) {
+  private function copyFileTo(
+    $fileSource,
+    $fileType,
+    $fileDestination,
+    $uid = FALSE
+  ) {
 
     $fileDestination = 0 === strpos(
       $fileDestination,
@@ -102,7 +114,7 @@ abstract class BaseBridge implements BridgeInterface {
     }
 
     $file = file_copy($file, $fileDestination, FILE_EXISTS_REPLACE);
-    if (false === $file) {
+    if (FALSE === $file) {
       throw new \RuntimeException('file could not be created.');
     }
 
