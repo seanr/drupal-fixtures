@@ -175,7 +175,7 @@ namespace Drupal\Fixtures\DrupalBridges {
       unset($fixNode->body);
 
       $wrappedNode->save();
-      return $wrappedNode->value();
+      return array($wrappedNode->value());
     }
 
     /**

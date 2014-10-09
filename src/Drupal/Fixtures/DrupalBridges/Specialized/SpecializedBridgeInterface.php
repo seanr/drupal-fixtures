@@ -19,7 +19,7 @@ interface SpecializedBridgeInterface {
      * @param \StdClass $fixNode
      *
      * @throws SpecializedBridgeException
-     * @return \StdClass
+     * @return \StdClass[]
      */
     public function process(\StdClass $fixNode);
 } 
