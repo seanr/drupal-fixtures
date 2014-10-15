@@ -78,7 +78,7 @@ trait ImageBridge {
     // required by file_entity.module line 2275
     $file->type = $fileType;
 
-    if (!drupal_is_writable('public://')) {
+    if (!$this->drupalIsWriteable('public://')) {
       throw new \RuntimeException('Directory: public:// is not writeable!');
     }
 
@@ -137,5 +137,30 @@ trait ImageBridge {
     }
 
     return $imgSourcePath;
+  }
+
+  /**
+   * @param $path
+   * @return bool
+   */
+  private function drupalIsWriteable($path) {
+    //NOTE: use a trailing slash for folders!!!
+    if ($path{strlen($path)-1} == '/') { // recursively return a temporary file path
+      return $this->drupalIsWriteable($path.uniqid(mt_rand()).'.tmp');
+    } elseif (is_dir($path)) {
+      return $this->drupalIsWriteable($path.'/'.uniqid(mt_rand()).'.tmp');
+    }
+
+    // check tmp file for read/write capabilities
+    $rm = file_exists($path);
+    $f = @fopen($path, 'a');
+    if ($f === FALSE) {
+      return FALSE;
+    }
+    fclose($f);
+    if (!$rm) {
+      unlink($path);
+    }
+    return TRUE;
   }
 } 
