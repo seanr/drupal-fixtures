@@ -49,7 +49,7 @@ trait ImageBridge {
     $file = $this->copyFileTo(
       $srcPicturePath,
       'image',
-      time() . 'img_.jpg',
+      pathinfo($srcPicturePath)['filename'] . '_img_.jpg',
       $uid
     );
 
