@@ -8,6 +8,8 @@
 namespace Drupal\Fixtures\DrupalBridges\Specialized;
 
 
+use Drupal\Fixtures\Providers\Event\PreprocessEvent;
+
 interface SpecializedBridgeInterface {
     /**
      * @throws SpecializedBridgeException
@@ -22,4 +24,10 @@ interface SpecializedBridgeInterface {
      * @return \StdClass[]
      */
     public function process(\StdClass $fixNode);
+
+    /**
+     * @param PreprocessEvent $event
+     * @return mixed
+     */
+    public function deleteAllNodes(PreprocessEvent $event);
 } 
