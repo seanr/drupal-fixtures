@@ -61,16 +61,6 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
       throw new DrupalFixturesException('Cannot find dir: ' . $this->fixturesPath);
     }
 
-    if (function_exists('drupal_dic')
-      && drupal_dic()->has('event_dispatcher')
-    ) {
-      $prepocressEvent = new \Drupal\Fixtures\Providers\Event\PreprocessEvent();
-
-      drupal_dic()->get('event_dispatcher')->dispatch(
-        'fixtures.preprocess', $prepocressEvent
-      );
-    }
-
     /** @var SplFileInfo $file */
     $fileIterator = $this->getFinder();
     foreach ($fileIterator as $file) {

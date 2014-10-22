@@ -31,6 +31,17 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
   public function processAll() {
     sort($this->providers, SORT_NUMERIC);
     /** @var FixtureProviderInterface $provider */
+
+    if (function_exists('drupal_dic')
+      && drupal_dic()->has('event_dispatcher')
+    ) {
+      $prepocressEvent = new \Drupal\Fixtures\Providers\Event\PreprocessEvent();
+
+      drupal_dic()->get('event_dispatcher')->dispatch(
+        'fixtures.preprocess', $prepocressEvent
+      );
+    }
+
     foreach ($this->providers as $providerType) {
       foreach ($providerType as $provider) {
         $provider->process();
