@@ -9,7 +9,6 @@
 ._.DS_Store
 Thumbs.db
 vendor/
-composer.lock
 /bin/
 .settings/org.eclipse.php.core.prefs
 *.iml
