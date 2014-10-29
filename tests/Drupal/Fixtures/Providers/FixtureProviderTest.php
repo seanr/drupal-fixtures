@@ -11,13 +11,9 @@ namespace Drupal\Fixtures\Providers;
 
 use Drupal\Fixtures\Exceptions\DrupalFixturesException;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Parser;
+
 
 class FixtureProviderTest extends \PHPUnit_Framework_TestCase {
-  /**
-   * @var Parser
-   */
-  protected $parser;
 
   /**
    * @var \PHPUnit_Framework_MockObject_MockObject
@@ -41,10 +37,9 @@ class FixtureProviderTest extends \PHPUnit_Framework_TestCase {
     $this->bridge = $this->getMockBuilder('Drupal\Fixtures\DrupalBridges\BridgeInterface')
       ->getMockForAbstractClass();
 
-    $this->parser = new Parser();
     $this->finder = new Finder();
 
-    $this->subjectToTest = new TestFixtureProvider($this->parser, $this->bridge, $this->finder);
+    $this->subjectToTest = new TestFixtureProvider($this->bridge, $this->finder);
     $this->subjectToTest
       ->setFixtureLoadPath(__DIR__ . '/../fixtures');
     $this->subjectToTest->setFileNamePattern('menu--*.yaml');
@@ -88,6 +83,29 @@ class FixtureProviderTest extends \PHPUnit_Framework_TestCase {
 
     $this->bridge
       ->expects($this->once())
+      ->method('createFixtures');
+
+    $this->subjectToTest
+      ->setReturnType(FixtureProviderInterface::ARRAY_RETURN_TYPE);
+
+    $result = $this->subjectToTest
+      ->process();
+
+    $this->assertTrue($result);
+  }
+
+  /**
+   * tests process when everything is fine
+   */
+  public function testProcessXmlAndYml() {
+    $this->subjectToTest->setFileNamePattern('user.*');
+
+    $this->bridge
+      ->expects($this->exactly(2))
+      ->method('validateFixtures');
+
+    $this->bridge
+      ->expects($this->exactly(2))
       ->method('createFixtures');
 
     $this->subjectToTest

@@ -22,7 +22,7 @@ class NodeFixtureProvider extends BaseFixtureProvider {
   /**
    * @const FILENAME_PATTERN
    */
-  const FILENAME_PATTERN = '/node--.*\.(yml|yaml)/';
+  const FILENAME_PATTERN = '/node--.*\.(yml|yaml|xml)/';
 
   /**
    * @const RETURN_TYPE

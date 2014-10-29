@@ -21,6 +21,10 @@ services:
     sf_fixture_yaml_file_parser:
         class: "%symfony.component.yaml.parser.class%"
 
+    fixture_parser_factory:
+        class: "%drupal.fixtures.providers.factory.fixture_parser_factory.class%"
+
+
     fixture_yaml_file_parser:
         class: "%drupal.fixtures.providers.factory.yml_fixture_file_parser.class%"
         factory_service:  fixture_parser_factory
@@ -29,6 +33,15 @@ services:
           - "yml"
           - "@sf_fixture_yaml_file_parser"
 
+    fixture_yml_file_parser:
+        class: "%drupal.fixtures.providers.factory.yml_fixture_file_parser.class%"
+        factory_service:  fixture_parser_factory
+        factory_method:   getParser
+        arguments:
+          - "yml"
+          - "@sf_fixture_yaml_file_parser"
+
+
     fixture_xml_file_parser:
         class: "%drupal.fixtures.providers.factory.xml_fixture_file_parser.class%"
         factory_service: fixture_parser_factory
@@ -36,16 +49,12 @@ services:
         arguments:
           - "xml"
 
-    fixture_parser_factory:
-        class: "%drupal.fixtures.providers.factory.fixture_parser_factory.class%"
-
     fixture_provider_chain:
         class: "%drupal.fixtures.providers.fixture_provider_chain.class%"
 
     menu_fixture_provider:
                 class: "%drupal.fixtures.providers.menu_fixture_provider.class%"
                 arguments:
-                    - "@fixture_yaml_file_parser"
                     - "@menu_drupal_bridge"
                 tags:
                     -  { name: drupal.fixtures.provider, order:3 }
@@ -53,7 +62,6 @@ services:
     node_fixture_provider:
                 class: "%drupal.fixtures.providers.node_fixture_provider.class%"
                 arguments:
-                    - "@fixture_yaml_file_parser"
                     - "@node_drupal_bridge"
                 tags:
                     -  { name: drupal.fixtures.provider, order:2 }
@@ -61,7 +69,6 @@ services:
     user_fixture_provider:
             class: "%drupal.fixtures.providers.user_fixture_provider.class%"
             arguments:
-                - "@fixture_yaml_file_parser"
                 - "@user_drupal_bridge"
             tags:
                 -  { name: drupal.fixtures.provider, order:1 }

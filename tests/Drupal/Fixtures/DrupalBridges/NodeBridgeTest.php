@@ -104,6 +104,7 @@ namespace Drupal\Fixtures\DrupalBridges {
 
   use Drupal\Fixtures\DrupalBridges\Specialized\SpecializedBridgeException;
   use Drupal\Fixtures\DrupalBridges\Specialized\SpecializedBridgeInterface;
+  use Drupal\Fixtures\Providers\Event\PreprocessEvent;
 
   function entity_metadata_wrapper($type, $node) {
     global $entityMetadataWrapperCalled, $nodeGiven, $entityDrupalWrapperMock;
@@ -210,6 +211,13 @@ namespace Drupal\Fixtures\DrupalBridges {
       return entity_metadata_wrapper($type, $node);
     }
 
+    /**
+     * @param PreprocessEvent $event
+     * @return mixed
+     */
+    public function deleteAllNodes(PreprocessEvent $event) {
+      // TODO: Implement deleteAllNodes() method.
+    }
   }
 
 }

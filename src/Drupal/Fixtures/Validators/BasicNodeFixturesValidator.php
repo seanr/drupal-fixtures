@@ -24,23 +24,35 @@ class BasicNodeFixturesValidator implements ValidatorInterface, NodeFixturesVali
    */
   public function validate(array $fixtures) {
     if (0 == count($this->specializedValidators)) {
-      return true;
+      return TRUE;
     }
 
     foreach ($fixtures as $node_name => $node) {
-      $node = (object) $node;
-      if ($this->hasSpecializedValidator($node->type)) {
-        $this->getSpecializedValidator($node->type)->validate($fixtures);
-      } else {
-        watchdog(
-          sprintf(
-            "There is no validator for node type: %s.", $node->type),
-          'info'
-        );
+      if (is_array($node)) {
+        foreach ($node as $singleNode) {
+          $singleNode = (object) $singleNode;
+          $this->validateNode($singleNode, $fixtures);
+        }
+      }
+      else {
+        $node = (object) $node;
+        $this->validateNode($node, $fixtures);
       }
     }
+    return TRUE;
+  }
 
-    return true;
+  private function validateNode(\StdClass $node, $fixtures) {
+    if ($this->hasSpecializedValidator($node->type)) {
+      $this->getSpecializedValidator($node->type)->validate($fixtures);
+    }
+    else {
+      watchdog(
+        sprintf(
+          "There is no validator for node type: %s.", $node->type),
+        'info'
+      );
+    }
   }
 
   /**

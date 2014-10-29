@@ -11,6 +11,9 @@ namespace Drupal\Fixtures\Providers;
 
 use Drupal\Fixtures\DrupalBridges\BridgeInterface;
 use Drupal\Fixtures\Exceptions\DrupalFixturesException;
+use Drupal\Fixtures\Providers\Factory\FixtureFileParserInterface;
+use Drupal\Fixtures\Providers\Factory\FixtureParserFactory;
+use Drupal\Fixtures\Providers\Factory\FixtureParserFactoryInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Parser;
@@ -22,11 +25,6 @@ use Symfony\Component\Yaml\Parser;
  * @package Drupal\Fixtures\Providers
  */
 abstract class BaseFixtureProvider implements FixtureProviderInterface {
-
-  /**
-   * @var Parser
-   */
-  protected $parser;
 
   /**
    * @var BridgeInterface
@@ -41,8 +39,7 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
   /**
    * @param Parser $yamlParser
    */
-  public function __construct(Parser $yamlParser, BridgeInterface $userBridge) {
-    $this->parser = $yamlParser;
+  public function __construct(BridgeInterface $userBridge) {
     $this->bridge = $userBridge;
   }
 
@@ -66,7 +63,10 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
     $fileIterator = $this->getFinder();
     foreach ($fileIterator as $file) {
       try {
-        $loadedFixtures = $this->parser->parse($file->getContents());
+        $fileParserServiceName = 'fixture_' . strtolower($file->getExtension()) . '_file_parser';
+        $parser = $this->getFileParser($fileParserServiceName);
+
+        $loadedFixtures = $parser->parse($file->getContents());
         $this->bridge->validateFixtures($loadedFixtures);
 
         if (is_array($loadedFixtures) && $this->getReturnType() == self::STDCLASS_RETURN_TYPE) {
@@ -92,7 +92,9 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
     /** @var SplFileInfo $file */
     $fileIterator = $this->getFinder();
     foreach ($fileIterator as $file) {
-      $loadedFixtures = $this->parser->parse($file->getContents());
+      $fileParserServiceName = 'fixture_' . strtolower($file->getExtension()) . '_file_parser service.';
+      $parser = $this->getFileParser($fileParserServiceName);
+      $loadedFixtures = $parser->parse($file->getContents());
       $this->bridge->validateFixtures($loadedFixtures);
     }
 
@@ -125,8 +127,15 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
    */
   protected function convertFixturesToObject(array $fixtures) {
     $result = array();
+    // @todo: ugly. Change it
     foreach ($fixtures as $fixtureItem) {
-      if (is_array($fixtureItem)) {
+      if (is_array($fixtureItem)
+        && array_key_exists(0, $fixtureItem)
+        && array_key_exists(1, $fixtureItem)) {
+        foreach($fixtureItem as $singleFixtureItem) {
+          $result[] = (object) $singleFixtureItem;
+        }
+      } else {
         $result[] = (object) $fixtureItem;
       }
     }
@@ -142,5 +151,22 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
     $fileIterator = $finder->files()->name($this->getFilenamePattern())->in($this->fixturesPath);
 
     return $fileIterator;
+  }
+
+  /**
+   * @param $fileParserServiceName
+   * @return \Drupal\Fixtures\Providers\Factory\FixtureFileParserInterface
+   * @throws \Drupal\Fixtures\Exceptions\DrupalFixturesException
+   */
+  private function getFileParser($fileParserServiceName) {
+      if (function_exists('drupal_dic')
+      && drupal_dic()->has($fileParserServiceName)
+    ) {
+      /** @var FixtureFileParserInterface $parser */
+      return drupal_dic()->get($fileParserServiceName);
+    }
+    else {
+      throw new DrupalFixturesException('Cannot find ' . $fileParserServiceName);
+    }
   }
 }

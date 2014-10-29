@@ -23,14 +23,24 @@ abstract class BaseFixturesValidator implements ValidatorInterface {
    */
   public function validate(array $fixtures) {
     foreach ($fixtures as $fixture) {
-      $numberKeysDiff = count(array_diff_key($this->getKeyMap(), (array) $fixture));
-      if ($numberKeysDiff != 0) {
-        throw new ValidationException(
-          'The fixtures ' . print_r($fixture, 1) . ' does not contain all needed
-                    fields: ' . print_r($this->getKeyMap(), 1) . '.');
+      if (is_array($fixture)) {
+        foreach($fixture as $singleFixture) {
+            $this->validateFixture($singleFixture);
+        }
+      } else {
+        $this->validateFixture($fixture);
       }
     }
 
     return true;
+  }
+
+  private function validateFixture(array $fixture) {
+    $numberKeysDiff = count(array_diff_key($this->getKeyMap(), (array) $fixture));
+    if ($numberKeysDiff != 0) {
+      throw new ValidationException(
+        'The fixtures ' . print_r($fixture, 1) . ' does not contain all needed
+                    fields: ' . print_r($this->getKeyMap(), 1) . '.');
+    }
   }
 }
