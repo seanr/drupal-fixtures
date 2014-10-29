@@ -15,6 +15,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Parser;
 
+
 /**
  * Class BaseFixtureProvider provides base functionality to load fixtures
  *

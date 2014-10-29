@@ -22,7 +22,7 @@ class UserFixtureProvider extends BaseFixtureProvider {
   /**
    * @const FILENAME_PATTERN
    */
-  const FILENAME_PATTERN = '/user.*\.(yml|yaml)/';
+  const FILENAME_PATTERN = '/user.*\.(yml|yaml|xml)/';
 
   /**
    * @const RETURN_TYPE

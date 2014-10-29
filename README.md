@@ -7,6 +7,8 @@ Fixtures is an idea derived from other frameworks - in this case Symfony and Rub
 writing default content for your website.  If you create your Drupal based website with Fixtures, you might need a set
 of default testing data to populate your site once you've installed it.
 
+The fixtures can also be given in XML format.
+
 Features enables you to create your website from a "clean-build path", instead of the classic "upgrade path" approach.
 This way, continuous integration is possible.  This creates a little problem: every time you do a clean install of your
 drupal website, you have to create content again and again.  Fixtures is a way to permanently create content in a text
@@ -16,8 +18,8 @@ USER FIXTURES
 =============
 Imports users.
 
-You can place files following user*.yml in `variable_get('fixture_load_path')`.
-So if you wan to change the default DRUPAL_ROOT . '/../config/fixtures' you can just set the variable.
+You can place files following user*.yml / xml in `variable_get('fixture_load_path')`.
+So if you want to change the default DRUPAL_ROOT . '/../config/fixtures' you can just set the variable.
 
 Example:
 
@@ -28,6 +30,20 @@ my-user:
   pass: my-password
   roles: "authenticated user"
 ```
+
+```xml
+<users>
+    <user>
+        <name>my-login</name>
+        <mail>my-email@example.com</mail>
+        <pass>my-password</pass>
+        <roles>
+            <role>authenticated user</role>
+        </roles>
+    </user>
+</users>
+```
+
 
 MENU FIXTURES
 =============

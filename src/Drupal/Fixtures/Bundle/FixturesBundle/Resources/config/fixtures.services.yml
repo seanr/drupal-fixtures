@@ -3,6 +3,9 @@ parameters:
   drupal.fixtures.providers.menu_fixture_provider.class: Drupal\Fixtures\Providers\MenuFixtureProvider
   drupal.fixtures.providers.node_fixture_provider.class: Drupal\Fixtures\Providers\NodeFixtureProvider
   drupal.fixtures.providers.user_fixture_provider.class: Drupal\Fixtures\Providers\UserFixtureProvider
+  drupal.fixtures.providers.factory.fixture_parser_factory.class: Drupal\Fixtures\Providers\Factory\FixtureParserFactory
+  drupal.fixtures.providers.factory.yml_fixture_file_parser.class: Drupal\Fixtures\Providers\Factory\YmlFixtureFileParser
+  drupal.fixtures.providers.factory.xml_fixture_file_parser.class: Drupal\Fixtures\Providers\Factory\XmlFixtureFileParser
 
   drupal.fixtures.drupal_bridges.menu_bridge.class: Drupal\Fixtures\DrupalBridges\MenuBridge
   drupal.fixtures.drupal_bridges.node_bridge.class: Drupal\Fixtures\DrupalBridges\NodeBridge
@@ -15,8 +18,26 @@ parameters:
   symfony.component.yaml.parser.class : Symfony\Component\Yaml\Parser
 
 services:
-    fixture_yaml_file_parser:
+    sf_fixture_yaml_file_parser:
         class: "%symfony.component.yaml.parser.class%"
+
+    fixture_yaml_file_parser:
+        class: "%drupal.fixtures.providers.factory.yml_fixture_file_parser.class%"
+        factory_service:  fixture_parser_factory
+        factory_method:   getParser
+        arguments:
+          - "yml"
+          - "@sf_fixture_yaml_file_parser"
+
+    fixture_xml_file_parser:
+        class: "%drupal.fixtures.providers.factory.xml_fixture_file_parser.class%"
+        factory_service: fixture_parser_factory
+        factory_method:  getParser
+        arguments:
+          - "xml"
+
+    fixture_parser_factory:
+        class: "%drupal.fixtures.providers.factory.fixture_parser_factory.class%"
 
     fixture_provider_chain:
         class: "%drupal.fixtures.providers.fixture_provider_chain.class%"

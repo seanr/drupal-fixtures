@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<users>
+  <user>
+    <name>my-login</name>
+    <mail>my-email@example.com</mail>
+    <pass>my-password</pass>
+    <roles>
+      <role>authenticated user</role>
+    </roles>
+  </user>
+</users>
