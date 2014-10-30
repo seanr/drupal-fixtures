@@ -125,19 +125,12 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
    *
    * @return array
    */
-  protected function convertFixturesToObject(array $fixtures) {
+  protected function convertFixturesToObject(array $fixturetypes) {
     $result = array();
-    // @todo: ugly. Change it
-    foreach ($fixtures as $fixtureItem) {
-      if (is_array($fixtureItem)
-        && array_key_exists(0, $fixtureItem)
-        && array_key_exists(1, $fixtureItem)) {
-        foreach($fixtureItem as $singleFixtureItem) {
+    foreach ($fixturetypes as $fixtureItems) {
+        foreach($fixtureItems as $singleFixtureItem) {
           $result[] = (object) $singleFixtureItem;
         }
-      } else {
-        $result[] = (object) $fixtureItem;
-      }
     }
 
     return $result;

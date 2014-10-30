@@ -1,22 +1,23 @@
-article-1:
-  title: Today a new star is born from fixtures
-  language: de
-  field_category: Stars
-  field_channel: BRAVO
-  field_tags:
-    - Beauty
-    - Stars
-  type: article
-  body:
-    value: |
-        Today something went wrong.  I still can't figure out exactly, but i'm still going to blog about
-        it.  I <em>really</em> don't care if anyone reads this, but I want this off my chest.  I'm a really
-        boring writer so I end up writing some rubbish in this YAML file.
+articles:
+  article-1:
+    title: Today a new star is born from fixtures
+    language: de
+    field_category: Stars
+    field_channel: BRAVO
+    field_tags:
+      - Beauty
+      - Stars
+    type: article
+    body:
+      value: |
+          Today something went wrong.  I still can't figure out exactly, but i'm still going to blog about
+          it.  I <em>really</em> don't care if anyone reads this, but I want this off my chest.  I'm a really
+          boring writer so I end up writing some rubbish in this YAML file.
 
-        Have fun reading something completely useless :-)
-    format: full_html
-  date: 2012-08-05 22:48:51
-  field_brv_3column_teaser_title: Katze ist Katze in Fixtures
-  author: editor_fixtures
-  path: blog/today-something-went-wrong
-  field_image: ../config/fixtures/img/cat.jpg
+          Have fun reading something completely useless :-)
+      format: full_html
+    date: 2012-08-05 22:48:51
+    field_brv_3column_teaser_title: Katze ist Katze in Fixtures
+    author: editor_fixtures
+    path: blog/today-something-went-wrong
+    field_image: ../config/fixtures/img/cat.jpg

@@ -24,14 +24,16 @@ So if you want to change the default DRUPAL_ROOT . '/../config/fixtures' you can
 Example:
 
 ```yaml
-my-user:
-  name: my-login
-  mail: my-email@example.com
-  pass: my-password
-  roles: "authenticated user"
+users:
+    my-user:
+      name: my-login
+      mail: my-email@example.com
+      pass: my-password
+      roles: "authenticated user"
 ```
 
 ```xml
+<?xml version="1.0" ?>
 <users>
     <user>
         <name>my-login</name>
@@ -50,7 +52,7 @@ MENU FIXTURES
 Define a menu tree in a file in the folder you have choosen for fixtures (or the default on) and use the naming
 convention:
 
-menu--*.yml
+menu--*.(yml|yaml|xml)
 
 Important: note that if you run menu fixture creation manually, you'll have to run them after nodes/taxonomies have
 been created.  Menu items created with a path that doesn't exist yet are not saved. This is no issue if you are using
@@ -58,32 +60,51 @@ been created.  Menu items created with a path that doesn't exist yet are not sav
 
 Example:
 ```yaml
-custom-menu:
-  title: Custom menu
-  description: A custom menu, used for main navigation
-  items:
-    item-home:
-      title: Home
-      link: home
-    item-about-me:
-      title: About me
-      link: about-me
+menus:
+    custom-menu:
+      title: Custom menu
+      description: A custom menu, used for main navigation
       items:
-        item-general:
-          title: General
+        item-home:
+          title: Home
+          link: home
+        item-about-me:
+          title: About me
           link: about-me
-        item-resume:
-          title: Resume
-          link: resume
-        item-projects:
-          title: Projects
-          link: projects
-    item-blog:
-      title: Blog
-      link: blog
-    item-contact-me:
-      title: Contact me
-      link: contact-me
+          items:
+            item-general:
+              title: General
+              link: about-me
+            item-resume:
+              title: Resume
+              link: resume
+            item-projects:
+              title: Projects
+              link: projects
+        item-blog:
+          title: Blog
+          link: blog
+        item-contact-me:
+          title: Contact me
+          link: contact-me
+```
+
+```xml
+<?xml version="1.0" ?>
+<menus>
+    <menu>
+        <custom-menu>
+            <title>Custom menu</title>
+            <description>A custom menu, used for main navigation</description>
+            <items>
+                <item-home>
+                    <title>Home</title>
+                    <link>home</link>
+                </item-home>
+            </items>
+        </custom-menu>
+     </menu>
+</menus>
 ```
 
 NODE FIXTURES
@@ -93,32 +114,43 @@ Below is a description of the node fixtures convention:
 node--*.yml
 
 Example:
-
 ```yaml
+articles:
+    article-1:
+      title: Today a new star is born from fixtures
+      language: de
+      field_category: Stars
+      field_channel: BRAVO
+      field_tags:
+        - Beauty
+        - Stars
+      type: article
+      body:
+        value: |
+            Today something went wrong.  I still can't figure out exactly, but i'm still going to blog about
+            it.  I <em>really</em> don't care if anyone reads this, but I want this off my chest.  I'm a really
+            boring writer so I end up writing some rubbish in this YAML file.
+    
+            Have fun reading something completely useless :-)
+        format: full_html
+      date: 2012-08-05 22:48:51
+      field_brv_3column_teaser_title: Katze ist Katze in Fixtures
+      author: editor_fixtures
+      path: blog/today-something-went-wrong
+      field_image: ../config/fixtures/img/cat.jpg
+```
 
-article-1:
-  title: Today a new star is born from fixtures
-  language: de
-  field_category: Stars
-  field_channel: BRAVO
-  field_tags:
-    - Beauty
-    - Stars
-  type: article
-  body:
-    value: |
-        Today something went wrong.  I still can't figure out exactly, but i'm still going to blog about
-        it.  I <em>really</em> don't care if anyone reads this, but I want this off my chest.  I'm a really
-        boring writer so I end up writing some rubbish in this YAML file.
-
-        Have fun reading something completely useless :-)
-    format: full_html
-  date: 2012-08-05 22:48:51
-  field_brv_3column_teaser_title: Katze ist Katze in Fixtures
-  author: editor_fixtures
-  path: blog/today-something-went-wrong
-  field_image: ../config/fixtures/img/cat.jpg
-
+```xml
+<?xml version="1.0" ?>
+<galleries>
+    <gallery>
+        <type>gallery</type>
+        <title>Real Women, Real Bodies: So sehen echte Frauen aus</title>
+        <description/>
+        <created>2014-09-30 00:00:00</created>
+        <cnt>14</cnt>
+    </gallery>
+</galleries>
 ```
 
 You will need to implement a Specialized NodeBridge Class which can handle your node types.
@@ -216,14 +248,12 @@ Example:
     }
 
   }
-
 ```
 
 
 RUN FIXTURES
 ============
 Use drush to run the fixtures.  The command is drush fixtures-all` and it currently imports users, nodes and menus.
-You can also run `drush fixtures-type --type=user or node or menu` to install only one.
 
 VALIDATE FIXTURES
 =================

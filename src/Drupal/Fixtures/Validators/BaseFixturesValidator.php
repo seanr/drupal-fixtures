@@ -23,13 +23,9 @@ abstract class BaseFixturesValidator implements ValidatorInterface {
    */
   public function validate(array $fixtures) {
     foreach ($fixtures as $fixture) {
-      if (is_array($fixture)) {
-        foreach($fixture as $singleFixture) {
+        foreach($fixture as $key => $singleFixture) {
             $this->validateFixture($singleFixture);
         }
-      } else {
-        $this->validateFixture($fixture);
-      }
     }
 
     return true;

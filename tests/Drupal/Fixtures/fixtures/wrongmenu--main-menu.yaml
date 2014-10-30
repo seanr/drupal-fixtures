@@ -1,3 +1,4 @@
-custom-menu:
-  title: Custom menu
-  description: A custom menu, used for main navigation
+menus:
+  custom-menu:
+    title: Custom menu
+    description: A custom menu, used for main navigation

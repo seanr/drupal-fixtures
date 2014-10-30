@@ -1,4 +1,5 @@
-article-1:
-  title: Today something went wrong
-  type: article
-  path: blog/today-something-went-wrong
+articles:
+  article-1:
+    title: Today something went wrong
+    type: article
+    path: blog/today-something-went-wrong
