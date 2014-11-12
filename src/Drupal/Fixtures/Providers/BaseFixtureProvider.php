@@ -62,12 +62,16 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
     /** @var SplFileInfo $file */
     $fileIterator = $this->getFinder();
     foreach ($fileIterator as $file) {
+      if (function_exists('drush_print')) {
+        drush_print('Processing fixutures of file: ' . $file->getFilename());
+      }
+
       try {
         $fileParserServiceName = 'fixture_' . strtolower($file->getExtension()) . '_file_parser';
         $parser = $this->getFileParser($fileParserServiceName);
 
         $loadedFixtures = $parser->parse($file->getContents());
-        $this->bridge->validateFixtures($loadedFixtures);
+        // $this->bridge->validateFixtures($loadedFixtures);
 
         if (is_array($loadedFixtures) && $this->getReturnType() == self::STDCLASS_RETURN_TYPE) {
           $loadedFixtures = $this->convertFixturesToObject($loadedFixtures);
@@ -76,7 +80,13 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
         $this->bridge->createFixtures($loadedFixtures);
       } catch (DrupalFixturesException $e) {
         // @todo: log exception
-        echo($e->getMessage() . "\n\n");
+        // Simple debug message so we can see what had been deleted.
+        if (function_exists('drush_print')) {
+          drush_print($e->getMessage());
+        } else {
+          echo($e->getMessage() . "\n\n");
+        }
+
         $overallResult = FALSE;
         break;
       }

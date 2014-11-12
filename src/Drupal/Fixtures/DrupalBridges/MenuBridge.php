@@ -20,6 +20,9 @@ class MenuBridge extends BaseBridge {
    */
   public function createFixtures(array $fixtureData) {
     foreach ($fixtureData as $menu_name => $menu_array) {
+      if (function_exists('drush_print')) {
+        drush_print('Creating fixture: ' . $menu_name . ' of type: menu');
+      }
       // entering loop for each defined menu in this file.
       // check if menu with key doesn't already exist, otherwise create new menu
       $menu = menu_load($menu_name);

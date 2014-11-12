@@ -31,6 +31,9 @@ class NodeBridge extends BaseBridge implements NodeBridgeInterface {
     $resultData = array();
 
     foreach ($fixtureData as $node_name => $node) {
+      if (function_exists('drush_print')) {
+        drush_print('Creating fixture: ' . $node_name . ' of type: ' . $node->type);
+      }
       $resultData[$node_name] = $this->fixtureCreateNode($node->type, $node);
     }
 

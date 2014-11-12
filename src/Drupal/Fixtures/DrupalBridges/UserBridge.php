@@ -33,6 +33,10 @@ class UserBridge extends BaseBridge {
           'The given user is not a StdClass object.'
         );
       }
+      if (function_exists('drush_print')) {
+        drush_print('Creating fixture: ' . $user->name . ' of type: user');
+      }
+
       $user->pass = user_hash_password($user->pass);
       // user->roles are a string coming from yaml
       // then converted into an array like $roles[<roleId>] = true;
