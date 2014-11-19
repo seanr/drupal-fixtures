@@ -10,7 +10,6 @@ parameters:
   drupal.fixtures.drupal_bridges.menu_bridge.class: Drupal\Fixtures\DrupalBridges\MenuBridge
   drupal.fixtures.drupal_bridges.node_bridge.class: Drupal\Fixtures\DrupalBridges\NodeBridge
   drupal.fixtures.drupal_bridges.user_bridge.class: Drupal\Fixtures\DrupalBridges\UserBridge
-  drupal.fixtures.drupal_bridges.entity_registry.class: Drupal\Fixtures\DrupalBridges\EntityRegistry
 
   drupal.fixtures.validators.basic_user_fixtures_validator.class: Drupal\Fixtures\Validators\BasicUserFixturesValidator
   drupal.fixtures.validators.basic_node_fixtures_validator.class: Drupal\Fixtures\Validators\BasicNodeFixturesValidator
@@ -88,12 +87,6 @@ services:
                     class: "%drupal.fixtures.validators.basic_menu_fixtures_validator.class%"
                     tags:
                         -  { name: drupal.fixtures.menu_drupal_bridge_validator }
-
-
-    drupal_bridge_entity_registry:
-        class: "%drupal.fixtures.drupal_bridges.entity_registry.class%"
-        tags:
-          - { name: drupal.event_listener, event: fixtures.node_created, method: addCreatedNode }
 
     menu_drupal_bridge:
         class: "%drupal.fixtures.drupal_bridges.menu_bridge.class%"
