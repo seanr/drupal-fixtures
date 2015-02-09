@@ -23,11 +23,11 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "symfony/finder": "@stable",
-        "symfony/dependency-injection": "@stable",
-        "symfony/yaml": "@stable",
-        "janschumann/dic": "0.1.0",
-        "janschumann/classloader_composer": "0.1.0"
+        "symfony/finder": "~2.4",
+        "symfony/dependency-injection": "~2.4",
+        "symfony/yaml": "~2.4",
+        "janschumann/dic": "~0.1",
+        "janschumann/classloader_composer": "~0.1",
     },
     "require-dev": {
         "phpunit/phpunit": "*@stable"
