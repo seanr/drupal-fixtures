@@ -21,16 +21,6 @@
             "name": "Tom Verhaeghe"
         }
     ],
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/janschumann/drupal-composer-classloader.git"
-        },
-        {
-        "type": "git",
-        "url": "https://github.com/janschumann/drupal-dic.git"
-        }
-    ],
     "require": {
         "php": ">=5.3.3",
         "symfony/finder": "2.4.*",
