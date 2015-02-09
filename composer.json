@@ -27,7 +27,7 @@
         "symfony/dependency-injection": "~2.4",
         "symfony/yaml": "~2.4",
         "janschumann/dic": "~0.1",
-        "janschumann/classloader_composer": "~0.1",
+        "janschumann/classloader_composer": "~0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "*@stable"
