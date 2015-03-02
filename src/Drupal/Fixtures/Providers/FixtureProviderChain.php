@@ -10,6 +10,7 @@
 namespace Drupal\Fixtures\Providers;
 
 use Drupal\Fixtures\Exceptions\ProviderNotFoundException;
+use Drupal\Fixtures\Providers\Event\PreprocessEvent;
 
 class FixtureProviderChain implements FixtureProviderChainInterface {
 
@@ -35,7 +36,7 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
     if (function_exists('drupal_dic')
       && drupal_dic()->has('event_dispatcher')
     ) {
-      $prepocressEvent = new \Drupal\Fixtures\Providers\Event\PreprocessEvent();
+      $prepocressEvent = new PreprocessEvent();
 
       drupal_dic()->get('event_dispatcher')->dispatch(
         'fixtures.preprocess', $prepocressEvent
@@ -51,7 +52,7 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
 
     $result = true;
     array_walk_recursive($overallResult, function($item) use (&$result) {
-      if (in_array(false, array_values($item))) {
+      if ($item == false || (is_array($item) && in_array(false, array_values($item)))) {
         $result = false;
       }
     });
