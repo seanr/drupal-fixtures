@@ -21,6 +21,10 @@ namespace Drupal\Fixtures\DrupalBridges {
 
   use PHPUnit_Framework_MockObject_MockObject;
 
+  function variable_get() {
+    return 'includes/password.inc';
+  }
+
   function user_load_by_name() {
     $user = new \StdClass();
     $user->uid = 23;

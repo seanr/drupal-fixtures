@@ -74,7 +74,6 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals($fileId, $savedFixtures[0]->picture);
     $this->assertEquals($userId, $savedFixtures[0]->uid);
     $this->assertEquals($roleId, $savedFixtures[0]->roles[0]);
-    $this->assertEquals(date_default_timezone_get(), $savedFixtures[0]->timezone);
   }
 
   /**
@@ -121,7 +120,6 @@ class UserBridgeTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(FALSE, isset($savedFixtures[0]->picture));
     $this->assertEquals($userId, $savedFixtures[0]->uid);
     $this->assertEquals($roleId, $savedFixtures[0]->roles[0]);
-    $this->assertEquals(date_default_timezone_get(), $savedFixtures[0]->timezone);
   }
 
 }

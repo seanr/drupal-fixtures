@@ -42,13 +42,21 @@ class FixtureProviderChain implements FixtureProviderChainInterface {
       );
     }
 
+    $overallResult = array();
     foreach ($this->providers as $providerType) {
       foreach ($providerType as $provider) {
-        $provider->process();
+        array_push($overallResult, $provider->process());
       }
     }
 
-    return TRUE;
+    $result = true;
+    array_walk_recursive($overallResult, function($item) use (&$result) {
+      if (in_array(false, array_values($item))) {
+        $result = false;
+      }
+    });
+
+    return $result;
   }
 
   /**

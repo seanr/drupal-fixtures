@@ -53,7 +53,7 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
    * {@inheritDoc}
    */
   public function process() {
-    $overallResult = TRUE;
+    $overallResult = array();
 
     if (!is_dir($this->fixturesPath)) {
       throw new DrupalFixturesException('Cannot find dir: ' . $this->fixturesPath);
@@ -78,6 +78,7 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
         }
 
         $this->bridge->createFixtures($loadedFixtures);
+        array_push($overallResult, TRUE);
       } catch (DrupalFixturesException $e) {
         // @todo: log exception
         // Simple debug message so we can see what had been deleted.
@@ -87,8 +88,8 @@ abstract class BaseFixtureProvider implements FixtureProviderInterface {
           echo($e->getMessage() . "\n\n");
         }
 
-        $overallResult = FALSE;
-        break;
+        array_push($overallResult, FALSE);
+        continue;
       }
     }
 
