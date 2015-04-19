@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Installation functions for fixtures module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function fixtures_install() {
+  variable_set('fixture_load_path', DRUPAL_ROOT . '/../config/fixtures');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function fixtures_uninstall() {
+  variable_del('fixture_load_path');
+}

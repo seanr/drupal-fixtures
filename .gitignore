@@ -1,0 +1,15 @@
+*.swp
+.Trash-1000
+.buildpath
+.idea
+.project
+.settings
+.cache
+.DS_Store
+._.DS_Store
+Thumbs.db
+vendor/
+/bin/
+.settings/org.eclipse.php.core.prefs
+*.iml
+/nbproject/*

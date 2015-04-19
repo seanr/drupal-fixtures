@@ -1,0 +1,104 @@
+parameters:
+  drupal.fixtures.providers.fixture_provider_chain.class: Drupal\Fixtures\Providers\FixtureProviderChain
+  drupal.fixtures.providers.menu_fixture_provider.class: Drupal\Fixtures\Providers\MenuFixtureProvider
+  drupal.fixtures.providers.node_fixture_provider.class: Drupal\Fixtures\Providers\NodeFixtureProvider
+  drupal.fixtures.providers.user_fixture_provider.class: Drupal\Fixtures\Providers\UserFixtureProvider
+  drupal.fixtures.providers.factory.fixture_parser_factory.class: Drupal\Fixtures\Providers\Factory\FixtureParserFactory
+  drupal.fixtures.providers.factory.yml_fixture_file_parser.class: Drupal\Fixtures\Providers\Factory\YmlFixtureFileParser
+  drupal.fixtures.providers.factory.xml_fixture_file_parser.class: Drupal\Fixtures\Providers\Factory\XmlFixtureFileParser
+
+  drupal.fixtures.drupal_bridges.menu_bridge.class: Drupal\Fixtures\DrupalBridges\MenuBridge
+  drupal.fixtures.drupal_bridges.node_bridge.class: Drupal\Fixtures\DrupalBridges\NodeBridge
+  drupal.fixtures.drupal_bridges.user_bridge.class: Drupal\Fixtures\DrupalBridges\UserBridge
+
+  drupal.fixtures.validators.basic_user_fixtures_validator.class: Drupal\Fixtures\Validators\BasicUserFixturesValidator
+  drupal.fixtures.validators.basic_node_fixtures_validator.class: Drupal\Fixtures\Validators\BasicNodeFixturesValidator
+  drupal.fixtures.validators.basic_menu_fixtures_validator.class: Drupal\Fixtures\Validators\BasicMenuFixturesValidator
+
+  symfony.component.yaml.parser.class : Symfony\Component\Yaml\Parser
+
+services:
+    sf_fixture_yaml_file_parser:
+        class: "%symfony.component.yaml.parser.class%"
+
+    fixture_parser_factory:
+        class: "%drupal.fixtures.providers.factory.fixture_parser_factory.class%"
+
+
+    fixture_yaml_file_parser:
+        class: "%drupal.fixtures.providers.factory.yml_fixture_file_parser.class%"
+        factory_service:  fixture_parser_factory
+        factory_method:   getParser
+        arguments:
+          - "yml"
+          - "@sf_fixture_yaml_file_parser"
+
+    fixture_yml_file_parser:
+        class: "%drupal.fixtures.providers.factory.yml_fixture_file_parser.class%"
+        factory_service:  fixture_parser_factory
+        factory_method:   getParser
+        arguments:
+          - "yml"
+          - "@sf_fixture_yaml_file_parser"
+
+
+    fixture_xml_file_parser:
+        class: "%drupal.fixtures.providers.factory.xml_fixture_file_parser.class%"
+        factory_service: fixture_parser_factory
+        factory_method:  getParser
+        arguments:
+          - "xml"
+
+    fixture_provider_chain:
+        class: "%drupal.fixtures.providers.fixture_provider_chain.class%"
+
+    menu_fixture_provider:
+                class: "%drupal.fixtures.providers.menu_fixture_provider.class%"
+                arguments:
+                    - "@menu_drupal_bridge"
+                tags:
+                    -  { name: drupal.fixtures.provider, order:3 }
+
+    node_fixture_provider:
+                class: "%drupal.fixtures.providers.node_fixture_provider.class%"
+                arguments:
+                    - "@node_drupal_bridge"
+                tags:
+                    -  { name: drupal.fixtures.provider, order:2 }
+
+    user_fixture_provider:
+            class: "%drupal.fixtures.providers.user_fixture_provider.class%"
+            arguments:
+                - "@user_drupal_bridge"
+            tags:
+                -  { name: drupal.fixtures.provider, order:1 }
+
+    user_fixture_validator:
+                class: "%drupal.fixtures.validators.basic_user_fixtures_validator.class%"
+                tags:
+                    -  { name: drupal.fixtures.user_drupal_bridge_validator }
+
+    node_fixture_validator:
+                    class: "%drupal.fixtures.validators.basic_node_fixtures_validator.class%"
+                    tags:
+                        -  { name: drupal.fixtures.node_drupal_bridge_validator }
+
+    menu_fixture_validator:
+                    class: "%drupal.fixtures.validators.basic_menu_fixtures_validator.class%"
+                    tags:
+                        -  { name: drupal.fixtures.menu_drupal_bridge_validator }
+
+    menu_drupal_bridge:
+        class: "%drupal.fixtures.drupal_bridges.menu_bridge.class%"
+        tags:
+            - { name: drupal.fixtures.drupal_bridge }
+
+    node_drupal_bridge:
+        class: "%drupal.fixtures.drupal_bridges.node_bridge.class%"
+        tags:
+            - { name: drupal.fixtures.drupal_bridge }
+
+    user_drupal_bridge:
+         class: "%drupal.fixtures.drupal_bridges.user_bridge.class%"
+         tags:
+            - { name: drupal.fixtures.drupal_bridge }

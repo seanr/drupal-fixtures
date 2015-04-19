@@ -1,80 +1,9 @@
 <?php
-/**
- * Sandbox module that creates nodes/menu items/taxonomy items from a simple yaml file
- * for testing and initial content if you develop in a clean-build environment.
- *
- *     _  _(o)_(o)_  _
- *   ._\`:_ F S M _:' \_,
- *       / (`---'\ `-.
- *    ,-`  _)    (_,
- *
- */
-
-$includes = array(
-  'fixtures.node',
-  'fixtures.menu',
-  'fixtures.user',
-);
-
-foreach ($includes as $include) {
-  module_load_include('inc', 'fixtures', $include);
-}
+require_once dirname(__FILE__) . '/fixtures.drush.inc';
 
 /**
- * implementation of hook_menu()
+ * Implementation of hook_dic_bundle_info()
  */
-function fixtures_menu() {
-  $items = array();
-  $items['debug_menus'] = array(
-    'title' => 'debugging fixtures',
-    'description' => 'bogus function for debugging fixtures',
-    'page callback' => 'fixtures_create_menus',
-    'access arguments' => array('access content'),
-    'file' => 'fixtures.menu.inc'
-  );
-  $items['debug_nodes'] = array(
-    'title' => 'debugging fixtures',
-    'description' => 'bogus function for debugging fixtures',
-    'page callback' => 'fixtures_create_nodes',
-    'access arguments' => array('access content'),
-    'file' => 'fixtures.node.inc'
-  );
-  return $items;
-}
-
-/**
- * Load the spyc library.
- */
-function _fixtures_load_spyc_library() {
-  // @TODO check if the spyc library is installed.  Throw error in system report if the spyc library is missing
-  $lib_dir = libraries_get_path('spyc');
-  include_once($lib_dir . '/spyc.php');
-}
-
-function fixtures_load_yaml($path) {
-  _fixtures_load_spyc_library();
-  return Spyc::YAMLLoad($path);
-}
-
-/**
- * This function will fetch the YAML files starting with the $type variable and return an array.
- */
-function fixtures_get_fixtures($type) {
-  // @todo make this function also search the sites/[domain] folders, now it's only looking in sites/all
-  $fixtures = array();
-  $directory = 'sites/all/fixtures';
-  if (is_dir($directory) && $handle = opendir($directory)) {
-    while (($file = readdir($handle)) !== FALSE) {
-      $file_array = explode('.', $file);
-      if (end($file_array) == 'yaml') {
-        $filename_parts = explode('--', reset($file_array));
-        if ($filename_parts[0] === $type) {
-          $yaml_file = $directory . '/' . $file;
-          $fixtures[] = fixtures_load_yaml($yaml_file);
-        }
-      }
-    }
-    closedir($handle);
-  }
-  return $fixtures;
+function fixtures_dic_bundle_info() {
+  return array('bundles' => array("\\Drupal\\Fixtures\\Bundle\\FixturesBundle\\FixturesBundle"));
 }
